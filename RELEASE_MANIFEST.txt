@@ -1,0 +1,68 @@
+PacRipper V1.0 ROM-free dual-variant public release inventory
+Created by Jacob Hodgkins
+
+License:
+  MIT License for original PacRipper software/project documentation
+  ROM/PROM inputs and ROM-derived generated output are not relicensed by MIT
+  see LICENSE, THIRD_PARTY_NOTICES.md, docs/LEGAL_AND_OUTPUT_POLICY.md
+
+Public executables:
+  bin/PacRipper
+  bin/PacRipperCore (private helper invoked by PacRipper)
+
+CLI:
+  PacRipper [--force] <input-rom.7z|.zip> <output-folder>
+  PacRipper --version
+
+Safe output policy:
+  existing output is refused unless --force is explicit
+  dangerous destinations remain forbidden even with --force
+
+Locked certified variants:
+  Pac-Man canonical 10-file set; reference container pacman.7z
+  Puckman canonical 16-file set; reference container puckman.zip
+  other revisions/variants intentionally unsupported in V1.0
+  every physical file authenticated by filename + size + CRC32 + SHA-256
+
+Independent output contract:
+  Pac-Man -> program/pacman.asm -> 10/10 board files / 25376/25376 bytes exact
+  Puckman -> program/puckman.asm -> 16/16 board files / 25376/25376 bytes exact
+  no cross-variant source-tree dependency
+  no duplicate hidden reconstruction assembly file
+  generated output includes LEGAL_NOTICE.md
+
+Shared recovered coverage:
+  381/381 semantic families
+  5414/5414 Z80 instructions
+  257/257 non-code semantic spans
+
+External assembler certification:
+  SjASMPlus 1.24.0 Pac-Man: 0 errors / 0 warnings
+  Pac-Man program SHA-256: e9d4817d70bf1931c25e39a3d626e05dd0d5902d9400097316248a52ff627b77
+  SjASMPlus 1.24.0 Puckman: 0 errors / 0 warnings
+  Puckman program SHA-256: de87b3024a309377f5cf438455ed7f37a7aa8b5db5da5189f9b8240f90057cef
+
+Archive safety:
+  16 MiB maximum input archive
+  64 maximum regular members
+  64 KiB maximum decompressed member
+  1 MiB maximum total decompressed data
+  ZIP compression-ratio guard plus traversal/duplicate/non-regular-member checks
+
+ROM policy:
+  no Pac-Man ROM/PROM payloads
+  no Puckman ROM/PROM payloads
+  no user input archives
+  no pre-generated disassembly output trees
+  dual-reference strict ROM-free audit: scripts/strict_rom_free_audit.py
+
+Release gates:
+  make release-check
+  scripts/test_certified_variants.py against both external canonical references
+  scripts/strict_rom_free_audit.py against both external canonical references
+
+GitHub repository packaging:
+  .github/workflows/release-check.yml runs only ROM-free local gates
+  issue and pull-request templates prohibit copyrighted ROM/disassembly attachments
+  .gitattributes normalizes text files and marks shipped binaries as binary
+  __pycache__ / *.pyc files are excluded from the shipping tree

@@ -1,0 +1,72 @@
+name: Bug report
+description: Report a reproducible PacRipper defect without uploading copyrighted ROM data.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a PacRipper issue.
+
+        **Do not attach Pac-Man/Puckman ROMs, generated complete disassemblies, reconstructed ROMs, or ROM byte dumps.** Use filenames, hashes, logs, and synthetic/minimal reproductions instead.
+
+  - type: input
+    id: version
+    attributes:
+      label: PacRipper version
+      placeholder: "1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      options:
+        - Ubuntu/Linux
+        - Windows/MinGW
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: variant
+    attributes:
+      label: Supported input profile
+      options:
+        - Pac-Man canonical 10-file set
+        - Puckman canonical 16-file set
+        - Not applicable / startup or build issue
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the observed behavior and what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Reproduction steps
+      description: Include the command used, but do not paste ROM contents.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Remove ROM byte dumps or other copyrighted payloads before posting.
+      render: text
+
+  - type: checkboxes
+    id: rom_policy
+    attributes:
+      label: ROM-free reporting confirmation
+      options:
+        - label: I have not attached or pasted copyrighted ROM/PROM data or a generated complete disassembly.
+          required: true

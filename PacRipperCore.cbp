@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+  <FileVersion major="1" minor="6" />
+  <Project>
+    <Option title="PacRipperCore" />
+    <Option pch_mode="2" />
+    <Option compiler="gcc" />
+    <Build>
+      <Target title="Release">
+        <Option output="bin/PacRipperCore" prefix_auto="0" extension_auto="1" />
+        <Option object_output="obj/codeblocks/core" />
+        <Option type="1" />
+        <Option compiler="gcc" />
+        <Compiler>
+          <Add option="-O2" />
+          <Add option="-DNDEBUG" />
+          <Add option="-std=c++17" />
+          <Add directory="src" />
+        </Compiler>
+        <Linker>
+          <Add option="-lstdc++fs" />
+        </Linker>
+      </Target>
+    </Build>
+    <Unit filename="src/rom/RomSet.cpp" />
+    <Unit filename="src/recovery/PacmanGraphicsCodec.cpp" />
+    <Unit filename="src/recovery/PacmanColorCodec.cpp" />
+    <Unit filename="src/recovery/PacmanWaveformCodec.cpp" />
+    <Unit filename="src/recovery/PacmanTimingPromCodec.cpp" />
+    <Unit filename="src/recovery/BoardResourceRecovery.cpp" />
+    <Unit filename="src/disasm/Z80Disassembler.cpp" />
+    <Unit filename="src/analysis/SymbolDatabase.cpp" />
+    <Unit filename="src/analysis/Analyzer.cpp" />
+    <Unit filename="src/decomp/Decompiler.cpp" />
+    <Unit filename="src/decomp/DecompilerExport.cpp" />
+    <Unit filename="src/decomp/StructuredControl.cpp" />
+    <Unit filename="src/decomp/StackModel.cpp" />
+    <Unit filename="src/decomp/ConditionSemantics.cpp" />
+    <Unit filename="src/decomp/RomClosure.cpp" />
+    <Unit filename="src/decomp/RomObjects.cpp" />
+    <Unit filename="src/decomp/ObjectPointerDataflow.cpp" />
+    <Unit filename="src/decomp/DefUseAnalysis.cpp" />
+    <Unit filename="src/decomp/RamObjects.cpp" />
+    <Unit filename="src/decomp/DefUseDataflow.cpp" />
+    <Unit filename="src/decomp/HardwareSemantics.cpp" />
+    <Unit filename="src/decomp/MemoryXrefs.cpp" />
+    <Unit filename="src/decomp/RamShapes.cpp" />
+    <Unit filename="src/decomp/HardwareSemanticDataflow.cpp" />
+    <Unit filename="src/decomp/TypeEvidence.cpp" />
+    <Unit filename="src/decomp/TableSchemas.cpp" />
+    <Unit filename="src/decomp/RoutineContracts.cpp" />
+    <Unit filename="src/decomp/TypeContractDataflow.cpp" />
+    <Unit filename="src/decomp/ValueFlow.cpp" />
+    <Unit filename="src/decomp/TypedLifting.cpp" />
+    <Unit filename="src/decomp/RoutineBehavior.cpp" />
+    <Unit filename="src/decomp/ContractValueDataflow.cpp" />
+    <Unit filename="src/decomp/StructuredValues.cpp" />
+    <Unit filename="src/decomp/RoutineRoles.cpp" />
+    <Unit filename="src/decomp/StructuredExpressionDataflow.cpp" />
+    <Unit filename="src/decomp/ResidualResearch.cpp" />
+    <Unit filename="src/decomp/ObjectStateRoles.cpp" />
+    <Unit filename="src/decomp/ResidualClosureDataflow.cpp" />
+    <Unit filename="src/decomp/IndirectAddressAnalysis.cpp" />
+    <Unit filename="src/decomp/IndirectAddressDataflow.cpp" />
+    <Unit filename="src/decomp/HighRomSemantics.cpp" />
+    <Unit filename="src/decomp/HighRomDataflow.cpp" />
+    <Unit filename="src/decomp/ResidualReferenceAnalysis.cpp" />
+    <Unit filename="src/decomp/ResidualReferenceDataflow.cpp" />
+    <Unit filename="src/decomp/SystemRootAnalysis.cpp" />
+    <Unit filename="src/decomp/SystemRootDataflow.cpp" />
+    <Unit filename="src/decomp/RootContextAnalysis.cpp" />
+    <Unit filename="src/decomp/RootContextDataflow.cpp" />
+    <Unit filename="src/decomp/MemoryAliasAnalysis.cpp" />
+    <Unit filename="src/decomp/MemoryAliasDataflow.cpp" />
+    <Unit filename="src/decomp/CommandStreamAnalysis.cpp" />
+    <Unit filename="src/decomp/CommandStreamDataflow.cpp" />
+    <Unit filename="src/decomp/MazeTopologyAnalysis.cpp" />
+    <Unit filename="src/decomp/MazeTopologyDataflow.cpp" />
+    <Unit filename="src/decomp/IntermissionAnalysis.cpp" />
+    <Unit filename="src/decomp/IntermissionDataflow.cpp" />
+    <Unit filename="src/decomp/ResidualExtentAnalysis.cpp" />
+    <Unit filename="src/decomp/ResidualExtentDataflow.cpp" />
+    <Unit filename="src/decomp/Im2VectorAnalysis.cpp" />
+    <Unit filename="src/decomp/Im2VectorDataflow.cpp" />
+    <Unit filename="src/decomp/SemanticLiftEngine.cpp" />
+    <Unit filename="src/decomp/SemanticLiftDataflow.cpp" />
+    <Unit filename="src/decomp/SemanticOracleEngine.cpp" />
+    <Unit filename="src/decomp/SemanticOracleDataflow.cpp" />
+    <Unit filename="src/decomp/ReconciliationDataflow.cpp" />
+    <Unit filename="src/decomp/CanonicalSemanticLift.cpp" />
+    <Unit filename="src/decomp/CanonicalSemanticDataflow.cpp" />
+    <Unit filename="src/decomp/CanonicalRomClosureDataflow.cpp" />
+    <Unit filename="src/decomp/ExactRomReconstruction.cpp" />
+    <Unit filename="src/decomp/ExactRomReconstructionDataflow.cpp" />
+    <Unit filename="src/decomp/RomRebuilder.cpp" />
+    <Unit filename="src/decomp/RomRebuilderDataflow.cpp" />
+    <Unit filename="src/reference/pacemu/cpu/Z80.cpp" />
+    <Unit filename="src/decomp/NativeRuntime.cpp" />
+    <Unit filename="src/decomp/NativeRenderer.cpp" />
+    <Unit filename="src/decomp/NativeAudio.cpp" />
+    <Unit filename="src/decomp/PlatformAbstraction.cpp" />
+    <Unit filename="src/decomp/GeneratedCppEngine.cpp" />
+    <Unit filename="src/pacripper_core_main.cpp" />
+    <Extensions>
+      <code_completion />
+      <envvars />
+      <debugger />
+    </Extensions>
+  </Project>
+</CodeBlocks_project_file>

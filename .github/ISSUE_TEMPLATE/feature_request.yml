@@ -1,0 +1,31 @@
+name: Feature request
+description: Suggest a PacRipper improvement or future supported profile.
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please describe the feature without attaching copyrighted ROM/PROM files or ROM-derived complete source trees.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem or goal
+      description: What would you like PacRipper to support or improve?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the desired user-facing behavior or architecture.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Non-ROM evidence or references
+      description: Hashes, public documentation, filenames, and hardware notes are welcome; do not attach ROM bytes.
