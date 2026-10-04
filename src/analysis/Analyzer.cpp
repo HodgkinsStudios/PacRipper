@@ -5,6 +5,7 @@
 #include <cerrno>
 #include <cstring>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <limits>
@@ -23,10 +24,12 @@ std::string hexWord(std::uint16_t v) {
 }
 bool ensureDir(const std::string& path) {
     if (path.empty()) return false;
-    struct stat st{};
-    if (stat(path.c_str(),&st)==0) return S_ISDIR(st.st_mode);
-    if (mkdir(path.c_str(),0755)==0) return true;
-    return errno==EEXIST;
+    std::error_code ec;
+    const std::filesystem::path dir(path);
+    if (std::filesystem::is_directory(dir, ec)) return true;
+    ec.clear();
+    return std::filesystem::create_directories(dir, ec) ||
+           (!ec && std::filesystem::is_directory(dir));
 }
 std::string accessName(RefAccess a) {
     switch(a) { case RefAccess::Read:return "read"; case RefAccess::Write:return "write"; case RefAccess::ReadWrite:return "read/write"; default:return "address"; }
