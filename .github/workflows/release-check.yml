@@ -48,3 +48,74 @@ jobs:
             exit 1
           fi
           echo 'Repository artifact guard: PASS'
+
+
+  windows-release-check:
+    name: Windows MinGW ROM-free release gates
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up MinGW-w64
+        id: msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: false
+          install: >-
+            mingw-w64-x86_64-gcc
+
+      - name: Resolve MinGW compiler
+        shell: msys2 {0}
+        run: |
+          g++ --version
+          printf 'MINGW_CXX=%s\n' "$(cygpath -w "$(command -v g++)")" >> "$GITHUB_ENV"
+
+      - name: Show Windows runtime tools
+        shell: cmd
+        run: |
+          python --version
+          where 7z
+          echo MINGW_CXX=%MINGW_CXX%
+
+      - name: Build native Windows binaries
+        shell: cmd
+        run: call build_windows_mingw.bat
+
+      - name: Run Windows ROM-free runtime gates
+        shell: cmd
+        run: |
+          python -m compileall -q scripts
+          python scripts\release_terminology_audit.py .
+          python scripts\test_archive_safety.py
+          python scripts\test_windows_runtime.py
+
+      - name: Confirm repository contains no ROM archives or generated outputs
+        shell: pwsh
+        run: |
+          $forbidden = Get-ChildItem -Recurse -File | Where-Object {
+            $_.Extension -in @('.7z', '.rar', '.rom', '.prom', '.bin', '.asm')
+          }
+          if ($forbidden) {
+            Write-Error ("Forbidden ROM/archive/generated-source artifact found:`n" + (($forbidden.FullName) -join "`n"))
+            exit 1
+          }
+          Write-Host "Repository artifact guard: PASS"
+
+      - name: Upload Windows binaries
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PacRipper-Windows-MinGW
+          path: |
+            bin/PacRipper.exe
+            bin/PacRipperCore.exe
+          if-no-files-found: error

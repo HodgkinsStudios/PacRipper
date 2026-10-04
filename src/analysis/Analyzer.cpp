@@ -5,6 +5,7 @@
 #include <cerrno>
 #include <cstring>
 #include <cstdlib>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <limits>
@@ -23,10 +24,12 @@ std::string hexWord(std::uint16_t v) {
 }
 bool ensureDir(const std::string& path) {
     if (path.empty()) return false;
-    struct stat st{};
-    if (stat(path.c_str(),&st)==0) return S_ISDIR(st.st_mode);
-    if (mkdir(path.c_str(),0755)==0) return true;
-    return errno==EEXIST;
+    std::error_code ec;
+    const std::filesystem::path dir(path);
+    if (std::filesystem::is_directory(dir, ec)) return true;
+    ec.clear();
+    return std::filesystem::create_directories(dir, ec) ||
+           (!ec && std::filesystem::is_directory(dir));
 }
 std::string accessName(RefAccess a) {
     switch(a) { case RefAccess::Read:return "read"; case RefAccess::Write:return "write"; case RefAccess::ReadWrite:return "read/write"; default:return "address"; }
@@ -275,11 +278,11 @@ void Analyzer::rebuildDataCandidates() {
         if(len>=2 && !overlapsPointer) {
             DataCandidate c; c.start=start; c.end=end; c.kind=CandidateKind::ByteLookupTable; c.confidence=60;
             c.staticRefPCs=collectImmediatePointerRefs(start,end,false);
-            std::size_t low6=0, textish=0, low5Even=0, low5Odd=0, pairShared=0, pairs=0;
+            std::size_t textish=0, low5Even=0, low5Odd=0, pairShared=0, pairs=0;
             std::uint8_t evenMin=0xFF,evenMax=0,oddMin=0xFF,oddMax=0;
             std::set<std::uint8_t> unique;
             for(std::uint16_t p=start;p<end;++p) {
-                const std::uint8_t v=program_[p]; unique.insert(v); if(v<=0x3F) ++low6;
+                const std::uint8_t v=program_[p]; unique.insert(v);
                 if((v>=0x40 && v<=0x5A) || v==0x2F || v==0x3A || v==0x8F || v==0x00) ++textish;
                 const auto r=romDataUsage_.find(p);
                 if(r!=romDataUsage_.end()) {

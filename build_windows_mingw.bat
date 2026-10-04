@@ -1,40 +1,60 @@
 @echo off
-rem PacRipper MinGW build for Windows
+rem PacRipper native MinGW build for Windows
 rem Created by Jacob Hodgkins
-setlocal EnableDelayedExpansion
+setlocal EnableExtensions EnableDelayedExpansion
 cd /d "%~dp0"
+
 if not exist bin mkdir bin
 if not exist obj\windows mkdir obj\windows
 
-where g++ >NUL 2>NUL
+if defined MINGW_CXX (
+  set "CXX=%MINGW_CXX%"
+) else (
+  set "CXX=g++"
+)
+
+"%CXX%" --version >NUL 2>NUL
 if errorlevel 1 (
-  echo ERROR: g++ was not found in PATH. Use a Code::Blocks MinGW terminal or add MinGW\bin to PATH.
+  echo ERROR: MinGW g++ was not found. Use a Code::Blocks MinGW terminal, add MinGW\bin to PATH, or set MINGW_CXX.
   exit /b 1
 )
 
-set OBJS=
+set "COMMON=-std=c++17 -O2 -DNDEBUG -Wall -Wextra -Wpedantic -Werror"
+set "INCLUDES=-Isrc"
+set "LINK_RUNTIME=-static-libgcc -static-libstdc++ -lstdc++fs"
+
+del /Q obj\windows\*.o 2>NUL
+set "OBJLIST=obj\windows\core_objects.rsp"
+type NUL > "%OBJLIST%"
+set /A OBJINDEX=0
+
 for /F "usebackq tokens=* delims=" %%S in ("config\core_sources.txt") do (
   if not "%%S"=="" (
-    set SRC=%%S
-    set SRC=!SRC:/=\!
-    set OBJ=obj\windows\%%~nS.o
+    set /A OBJINDEX+=1
+    set "SRC=%%S"
+    set "SRC=!SRC:/=\!"
+    set "OBJ=obj\windows\core_!OBJINDEX!.o"
     echo [CXX] !SRC!
-    g++ -std=c++17 -O2 -DNDEBUG -Isrc -c "!SRC!" -o "!OBJ!"
+    "%CXX%" %COMMON% %INCLUDES% -c "!SRC!" -o "!OBJ!"
     if errorlevel 1 exit /b 1
-    set OBJS=!OBJS! "!OBJ!"
+    >>"%OBJLIST%" echo "!OBJ!"
   )
 )
 
 echo [CXX] src\pacripper_core_main.cpp
-g++ -std=c++17 -O2 -DNDEBUG -Isrc -c src\pacripper_core_main.cpp -o obj\windows\pacripper_core_main.o
+"%CXX%" %COMMON% %INCLUDES% -c src\pacripper_core_main.cpp -o obj\windows\pacripper_core_main.o
 if errorlevel 1 exit /b 1
 
 echo [LINK] bin\PacRipperCore.exe
-g++ -std=c++17 -O2 -o bin\PacRipperCore.exe !OBJS! obj\windows\pacripper_core_main.o -lstdc++fs
+"%CXX%" -std=c++17 -O2 -o bin\PacRipperCore.exe @"%OBJLIST%" obj\windows\pacripper_core_main.o %LINK_RUNTIME%
 if errorlevel 1 exit /b 1
 
 echo [LINK] bin\PacRipper.exe
-g++ -std=c++17 -O2 -DNDEBUG src\main.cpp -o bin\PacRipper.exe -lstdc++fs
+"%CXX%" %COMMON% src\main.cpp -o bin\PacRipper.exe %LINK_RUNTIME%
+if errorlevel 1 exit /b 1
+
+echo [TEST] PacRipper.exe --version
+bin\PacRipper.exe --version
 if errorlevel 1 exit /b 1
 
 echo PacRipper Windows MinGW build: PASS

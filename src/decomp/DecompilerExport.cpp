@@ -9,6 +9,7 @@
 
 #include <algorithm>
 #include <cerrno>
+#include <filesystem>
 #include <fstream>
 #include <iomanip>
 #include <sstream>
@@ -19,7 +20,7 @@ namespace pacripper {
 namespace {
 std::string hex8(std::uint8_t v){std::ostringstream o;o<<std::uppercase<<std::hex<<std::setw(2)<<std::setfill('0')<<(unsigned)v;return o.str();}
 std::string hex16(std::uint16_t v){std::ostringstream o;o<<std::uppercase<<std::hex<<std::setw(4)<<std::setfill('0')<<(unsigned)v;return o.str();}
-bool ensureDir(const std::string& p){struct stat st{};if(stat(p.c_str(),&st)==0)return S_ISDIR(st.st_mode);return mkdir(p.c_str(),0755)==0||errno==EEXIST;}
+bool ensureDir(const std::string& p){if(p.empty())return false;std::error_code ec;const std::filesystem::path dir(p);if(std::filesystem::is_directory(dir,ec))return true;ec.clear();if(std::filesystem::exists(dir,ec))return false;ec.clear();if(std::filesystem::create_directories(dir,ec))return true;ec.clear();return std::filesystem::is_directory(dir,ec);}
 std::string jsonEscape(const std::string& s){std::ostringstream o;for(char c:s){switch(c){case '\\':o<<"\\\\";break;case '"':o<<"\\\"";break;case '\n':o<<"\\n";break;case '\r':o<<"\\r";break;case '\t':o<<"\\t";break;default:if(static_cast<unsigned char>(c)<32)o<<"?";else o<<c;}}return o.str();}
 std::string csvBytes(const std::vector<std::uint8_t>&v){std::ostringstream o;for(std::size_t i=0;i<v.size();++i){if(i)o<<" ";o<<hex8(v[i]);}return o.str();}
 std::string joinSizesCsv(const std::set<std::size_t>&v){std::ostringstream o;std::size_t n=0;for(auto x:v){if(n++)o<<"|";o<<x;}return o.str();}

@@ -50,17 +50,37 @@ python3 scripts/strict_rom_free_audit.py . /path/to/pacman.7z /path/to/puckman.z
 
 ## Code::Blocks
 
-Open `PacRipper.workspace` and build the workspace. `PacRipper` depends on `PacRipperCore`, so both targets are produced. The projects use C++17 and `-lstdc++fs` for compatibility with older GCC/MinGW toolchains.
+Open `PacRipper.workspace`. On Linux, build the normal `Release` targets. On Windows, select the `Windows Release` target for both projects; `PacRipper` depends on `PacRipperCore`, so both executables are produced. The Windows targets use C++17, MinGW-w64, static libgcc/libstdc++ runtime linkage, and `-lstdc++fs` for compatibility with older MinGW toolchains.
 
 ## Windows / MinGW
+
+Requirements:
+
+- Windows 10/11;
+- MinGW-w64 / GCC with C++17 support (the Code::Blocks MinGW toolchain is supported);
+- Python 3;
+- 7-Zip for direct `.7z` input unless a compatible libarchive DLL is installed.
+
+From a normal Command Prompt or a Code::Blocks MinGW terminal:
 
 ```bat
 build_windows_mingw.bat
 ```
 
-This is intended to produce `bin\PacRipper.exe` and `bin\PacRipperCore.exe`. Python 3 must be available as `python`/`python3` or through `PACRIPPER_PYTHON`. For `.7z` input, PacRipper uses host libarchive when available or an installed 7-Zip command as a fallback.
+This produces:
 
-The V1.0 package's supplied prebuilt binaries and release certification are Linux builds. Build and execute the same certification suite on Windows before labeling separately distributed Windows binaries as certified.
+```text
+bin\PacRipper.exe
+bin\PacRipperCore.exe
+```
+
+The batch build is strict (`-Wall -Wextra -Wpedantic -Werror`) and links the MinGW libgcc/libstdc++ runtimes statically so a normal user does not need MinGW runtime DLLs beside PacRipper. If `g++` is not on PATH, set `MINGW_CXX` to the full `g++.exe` path before running the script.
+
+The Windows launcher accepts Python through `py -3`, `python`, `python3`, or `PACRIPPER_PYTHON`. It resolves PacRipper's package root from the executable location rather than the current working directory and preserves Unicode input/output paths.
+
+For `.7z` input on Windows, PacRipper prefers the native 7-Zip executable found on PATH or under the standard Program Files installation directories. ZIP input remains dependency-free.
+
+The public GitHub Actions Windows job builds both executables and runs `scripts/test_windows_runtime.py`, which verifies the launcher, synthetic ZIP/7z extraction, explicit Python selection, unrelated working directories, and non-ASCII paths. The exact Pac-Man/Puckman reconstruction tests remain local release checks because copyrighted ROM references are intentionally absent from public CI.
 
 ## Runtime layout
 

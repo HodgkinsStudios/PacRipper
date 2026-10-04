@@ -46,4 +46,6 @@ The distributable contains no canonical ROM/PROM payload, generated program ASM,
 
 ## Platform note
 
-The supplied prebuilt executables and this certification were produced on Linux. Windows/MinGW and Code::Blocks build files are included, but a Windows binary is not labeled certified until the same release suite is executed on Windows.
+The original V1.0 release certification and supplied prebuilt executables were produced on Linux. The source tree now also contains a completed native Windows/MinGW port with dedicated Code::Blocks targets and a Windows GitHub Actions gate that builds both executables and exercises ROM-free launcher/archive behavior, including synthetic 7z and Unicode paths.
+
+Exact Pac-Man/Puckman round-trip certification is still performed only with lawfully supplied external reference sets and is intentionally not run in public CI.

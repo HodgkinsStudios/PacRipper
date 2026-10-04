@@ -257,6 +257,9 @@ def _find_7z_executable() -> str | None:
             Path(os.environ.get("ProgramFiles", r"C:\Program Files")) / "7-Zip" / "7z.exe",
             Path(os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)")) / "7-Zip" / "7z.exe",
         ]
+        chocolatey = os.environ.get("ChocolateyInstall")
+        if chocolatey:
+            candidates.append(Path(chocolatey) / "bin" / "7z.exe")
         for p in candidates:
             if p.is_file():
                 return str(p)
@@ -289,8 +292,8 @@ def _run_7z_member_limited(exe: str, path: Path, name: str) -> bytes:
     return bytes(data)
 
 
-def _external_7z_members(path: Path) -> list[tuple[str, bytes]]:
-    exe = _find_7z_executable()
+def _external_7z_members(path: Path, exe: str | None = None) -> list[tuple[str, bytes]]:
+    exe = exe or _find_7z_executable()
     if not exe:
         raise RuntimeError(
             "7z input requires either libarchive support or 7-Zip (7z/7zz) installed. "
@@ -341,6 +344,13 @@ def read_archive_members(path: Path) -> list[tuple[str, bytes]]:
     if kind == "zip":
         return _zip_members(path)
     if kind == "7z":
+        # Prefer the native 7-Zip executable on Windows when available. Windows
+        # subprocess uses wide-character process APIs, avoiding narrow-path issues
+        # in third-party libarchive DLL builds for non-ASCII archive locations.
+        if os.name == "nt":
+            exe = _find_7z_executable()
+            if exe:
+                return _external_7z_members(path, exe)
         members = _libarchive_7z_members(path)
         return members if members is not None else _external_7z_members(path)
     raise ValueError(f"input is not a readable ZIP or 7z archive: {path}")
