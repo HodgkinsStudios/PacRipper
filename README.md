@@ -28,6 +28,13 @@ Examples:
 ./bin/PacRipper ~/roms/puckman.zip ~/Puckman_Disassembly
 ```
 
+Windows:
+
+```bat
+bin\PacRipper.exe "C:\ROMs\pacman.7z" "C:\PacRipper Output\PacMan_Disassembly"
+bin\PacRipper.exe "C:\ROMs\puckman.zip" "C:\PacRipper Output\Puckman_Disassembly"
+```
+
 PacRipper refuses to replace an existing output destination by default. To deliberately replace a safe existing destination:
 
 ```bash
@@ -90,7 +97,9 @@ Runtime:
 - the PacRipper package kept intact (`bin`, `scripts`, `semantic`, and supporting metadata);
 - one supported user-supplied ROM set.
 
-ZIP input uses Python's standard library. 7z input uses host libarchive when available, with installed 7-Zip (`7z`, `7zz`, or `7zr`) as a fallback. PacRipper does not bundle those external tools.
+ZIP input uses Python's standard library. On Windows, 7z input prefers an installed 7-Zip executable and automatically checks PATH plus the normal `Program Files\7-Zip` locations; libarchive remains a fallback. Linux/macOS retain libarchive-first behavior. PacRipper does not bundle Python, 7-Zip, or libarchive.
+
+The Windows launcher supports the standard Python `py -3` launcher, `python`, `python3`, or an explicit `PACRIPPER_PYTHON` path. Windows input/output paths are read from the Unicode command line, so non-ASCII paths are supported.
 
 Ubuntu/Linux build:
 
@@ -104,7 +113,7 @@ Strict public-release build gate:
 make release-check
 ```
 
-Windows/MinGW and Code::Blocks build files are included. V1.0's supplied binaries and release certification are Linux builds; distributors should build and test Windows binaries on Windows before publishing them as certified binaries. See `BUILDING.md`.
+Native Windows/MinGW support is included and continuously built on GitHub Actions. Build with `build_windows_mingw.bat` or choose the `Windows Release` targets in the Code::Blocks workspace. The Windows CI gate builds both executables, runs synthetic ZIP/7z archive tests, verifies launcher behavior from an unrelated working directory, and exercises non-ASCII Windows paths. Exact Pac-Man/Puckman round-trip certification still requires lawfully supplied external ROM references and therefore is not performed in public CI. See `BUILDING.md`.
 
 ## ROM-free distribution
 
@@ -137,7 +146,7 @@ See:
 
 ## GitHub repository checks
 
-The repository includes a ROM-free GitHub Actions workflow at `.github/workflows/release-check.yml`. It runs the strict C++ release build, Python syntax checks, public terminology audit, synthetic archive/output safety tests, and a repository artifact guard without using or downloading copyrighted ROM data.
+The repository includes a ROM-free GitHub Actions workflow at `.github/workflows/release-check.yml`. Linux runs the strict C++ release build, Python syntax checks, public terminology audit, synthetic archive/output safety tests, and repository artifact guard. Windows separately builds the native MinGW executables and runs the Windows runtime smoke suite, including synthetic ZIP/7z and Unicode-path coverage. Neither job uses or downloads copyrighted ROM data.
 
 The exact Pac-Man and Puckman reconstruction certifications cannot run in public CI because PacRipper intentionally does not distribute the required ROM/PROM inputs. Maintainers perform those release-only checks locally with lawfully supplied external references using `scripts/test_certified_variants.py`, followed by `scripts/strict_rom_free_audit.py` against both supported reference sets.
 
