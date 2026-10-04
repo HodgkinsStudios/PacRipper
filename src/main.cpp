@@ -345,6 +345,11 @@ int runPythonWindows(const PythonCommand& python, const fs::path& script,
 }
 
 int runPlatformMainWindows(const std::vector<std::wstring>& argv) {
+    // Force Python's UTF-8 mode for child processes so Windows paths and
+    // diagnostics remain lossless even when the active console code page is
+    // unable to represent non-ASCII characters.
+    _wputenv_s(L"PYTHONUTF8", L"1");
+
     if (argv.size() == 2 && argv[1] == L"--version") {
         std::cout << "PacRipper " << kVersion << "\n";
         return 0;
