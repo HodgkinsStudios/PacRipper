@@ -1,5 +1,6 @@
 // PacRipper public command-line front end
 // Created by Jacob Hodgkins
+#include <cstdint>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
