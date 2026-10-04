@@ -122,3 +122,91 @@ jobs:
           name: PacRipper-Windows-MinGW
           path: dist/PacRipper-Windows
           if-no-files-found: error
+
+
+  macos-release-check:
+    name: macOS universal ROM-free release gates
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Show macOS toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          sw_vers
+          uname -m
+          python3 --version
+          clang++ --version
+          lipo -version
+
+      - name: Install 7-Zip test tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v 7zz >/dev/null 2>&1 && ! command -v 7z >/dev/null 2>&1; then
+            brew install sevenzip
+          fi
+          (command -v 7zz || command -v 7z || command -v 7zr)
+
+      - name: Build universal macOS binaries
+        shell: bash
+        run: |
+          chmod +x build_macos.sh package_macos.sh
+          ./build_macos.sh
+          file bin/PacRipper
+          file bin/PacRipperCore
+          lipo -archs bin/PacRipper
+          lipo -archs bin/PacRipperCore
+
+      - name: Run macOS ROM-free source-tree gates
+        shell: bash
+        env:
+          PACRIPPER_EXPECT_UNIVERSAL: "1"
+        run: |
+          set -euo pipefail
+          python3 -m compileall -q scripts
+          python3 scripts/release_terminology_audit.py .
+          python3 scripts/test_archive_safety.py
+          python3 scripts/test_macos_runtime.py
+
+      - name: Stage standalone macOS package
+        shell: bash
+        run: ./package_macos.sh
+
+      - name: Run macOS ROM-free staged-package gates
+        shell: bash
+        env:
+          PACRIPPER_EXPECT_UNIVERSAL: "1"
+        run: |
+          set -euo pipefail
+          python3 dist/PacRipper-macOS/scripts/test_macos_runtime.py
+          tar -tzf dist/PacRipper-macOS-universal.tar.gz >/dev/null
+
+      - name: Confirm repository contains no ROM archives or generated outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f \( \
+              -iname '*.7z' -o -iname '*.rar' -o -iname '*.rom' -o -iname '*.prom' \
+              -o -iname '*.bin' -o -iname '*.asm' \
+            \) -print -quit | grep -q .; then
+            echo 'Forbidden ROM/archive/generated-source artifact found:'
+            find . -type f \( \
+              -iname '*.7z' -o -iname '*.rar' -o -iname '*.rom' -o -iname '*.prom' \
+              -o -iname '*.bin' -o -iname '*.asm' \
+            \) -print
+            exit 1
+          fi
+          echo 'Repository artifact guard: PASS'
+
+      - name: Upload standalone macOS universal package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PacRipper-macOS-Universal
+          path: dist/PacRipper-macOS-universal.tar.gz
+          if-no-files-found: error
