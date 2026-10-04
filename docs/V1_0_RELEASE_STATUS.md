@@ -52,4 +52,6 @@ The Windows port has dedicated Code::Blocks targets plus a Windows GitHub Action
 
 The macOS port produces universal Intel (`x86_64`) + Apple Silicon (`arm64`) Mach-O executables, has dedicated Code::Blocks targets, resolves its packaged executable location through dyld, and has a macOS GitHub Actions gate that validates synthetic ZIP/7z handling, Unicode paths, explicit Python selection, universal slices, and the staged standalone package.
 
+For other Linux distributions, PacRipper also provides a ROM-free Docker/OCI image. It rebuilds the native executables inside the image, bundles the required runtime dependencies, supports Docker or Podman hosts independent of the host distribution, and is validated with non-root bind mounts plus synthetic ZIP/7z input. The published image targets both `linux/amd64` and `linux/arm64`.
+
 Exact Pac-Man/Puckman round-trip certification is still performed only with lawfully supplied external reference sets and is intentionally not run in public CI.

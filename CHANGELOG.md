@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased — Docker/OCI distribution
+
+- Added a multi-stage ROM-free Docker image that compiles PacRipper from source.
+- Added a self-contained Debian runtime with Python 3, libarchive, and 7-Zip support.
+- Added host bind-mount usage that works across Docker/Podman-capable Linux distributions.
+- Added non-root host-user, Unicode-path, synthetic ZIP, and synthetic 7z container runtime tests.
+- Added a strict `.dockerignore` that excludes ROM/archive/generated-output payloads and checked-in native binaries from the build context.
+- Added GitHub Actions validation plus multi-architecture `linux/amd64` and `linux/arm64` publication to GHCR.
+
 ## Unreleased — macOS port
 
 - Added a native Apple Clang/libc++ build path for macOS.
