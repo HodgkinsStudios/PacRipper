@@ -116,6 +116,28 @@ Native macOS universal build (Intel + Apple Silicon):
 
 The macOS package contains universal `x86_64` + `arm64` Mach-O executables and is staged as `dist/PacRipper-macOS`, with a permission-preserving `dist/PacRipper-macOS-universal.tar.gz` archive for distribution.
 
+Docker/OCI image for any Linux host with Docker or Podman:
+
+```bash
+docker pull ghcr.io/hodgkinsstudios/pacripper:latest
+mkdir -p PacMan_Disassembly
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -v "$PWD:/work" \
+  ghcr.io/hodgkinsstudios/pacripper:latest \
+  /work/pacman.7z /work/PacMan_Disassembly
+```
+
+The same image works from Fedora, Arch, openSUSE, Debian, Ubuntu, and other Linux distributions because PacRipper and its runtime dependencies execute inside the container. Podman can be used by replacing `docker` with `podman`. On SELinux-enforcing hosts such as Fedora/RHEL, add `:Z` to the bind mount (`-v "$PWD:/work:Z"`). The image never includes ROMs; the user-supplied archive is mounted at runtime.
+
+Build the image locally with:
+
+```bash
+docker build -t pacripper:local .
+```
+
+Running the image with no arguments prints the PacRipper version. The container is also published for both `linux/amd64` and `linux/arm64` at `ghcr.io/hodgkinsstudios/pacripper`.
+
 Strict public-release build gate:
 
 ```bash
@@ -157,7 +179,7 @@ See:
 
 ## GitHub repository checks
 
-The repository includes a ROM-free GitHub Actions workflow at `.github/workflows/release-check.yml`. Linux runs the strict C++ release build, Python syntax checks, public terminology audit, synthetic archive/output safety tests, and repository artifact guard. Windows separately builds the native MinGW executables and runs the Windows runtime smoke suite. macOS separately builds universal Apple Clang binaries, validates both `x86_64` and `arm64` slices, runs synthetic ZIP/7z and Unicode-path coverage, retests from the standalone staged package, and publishes the universal macOS package artifact. None of these jobs uses or downloads copyrighted ROM data.
+The repository includes ROM-free GitHub Actions workflows for native releases and containers. `.github/workflows/release-check.yml` validates Linux, Windows, and macOS. `.github/workflows/docker-image.yml` builds the Docker image, runs synthetic ZIP/7z and Unicode bind-mount tests as a non-root host user, and on `main` publishes a multi-architecture `linux/amd64` + `linux/arm64` image to GitHub Container Registry. None of these jobs uses or downloads copyrighted ROM data.
 
 The exact Pac-Man and Puckman reconstruction certifications cannot run in public CI because PacRipper intentionally does not distribute the required ROM/PROM inputs. Maintainers perform those release-only checks locally with lawfully supplied external references using `scripts/test_certified_variants.py`, followed by `scripts/strict_rom_free_audit.py` against both supported reference sets.
 
