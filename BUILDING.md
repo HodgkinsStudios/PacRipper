@@ -80,7 +80,15 @@ The Windows launcher accepts Python through `py -3`, `python`, `python3`, or `PA
 
 For `.7z` input on Windows, PacRipper prefers the native 7-Zip executable found on PATH or under the standard Program Files installation directories. ZIP input remains dependency-free.
 
-The public GitHub Actions Windows job builds both executables and runs `scripts/test_windows_runtime.py`, which verifies the launcher, synthetic ZIP/7z extraction, explicit Python selection, unrelated working directories, and non-ASCII paths. The exact Pac-Man/Puckman reconstruction tests remain local release checks because copyrighted ROM references are intentionally absent from public CI.
+To stage a portable Windows folder after a successful build:
+
+```bat
+package_windows.bat
+```
+
+The default output is `dist\PacRipper-Windows`. You can also pass a custom destination as the first argument. Keep the staged folder intact when distributing or running PacRipper; the frontend locates its Python pipeline relative to the package.
+
+The public GitHub Actions Windows job builds both executables and runs `scripts/test_windows_runtime.py`, which verifies the launcher, synthetic ZIP/7z extraction, explicit Python selection, unrelated working directories, and non-ASCII paths. It then stages `dist\PacRipper-Windows` and runs the same runtime suite from that clean package before publishing the package as the `PacRipper-Windows-MinGW` artifact. The exact Pac-Man/Puckman reconstruction tests remain local release checks because copyrighted ROM references are intentionally absent from public CI.
 
 ## Runtime layout
 
