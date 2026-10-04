@@ -257,6 +257,12 @@ std::wstring quoteWindowsArgument(const std::wstring& arg) {
 }
 
 int spawnWindows(const PythonCommand& python, const std::vector<std::wstring>& tailArgs) {
+    // PacRipper accepts Unicode Windows paths. Force Python's standard streams
+    // to UTF-8 so diagnostics containing those paths do not fail under a legacy
+    // Windows console code page (for example CP-1252).
+    SetEnvironmentVariableW(L"PYTHONUTF8", L"1");
+    SetEnvironmentVariableW(L"PYTHONIOENCODING", L"utf-8");
+
     std::vector<std::wstring> owned;
     owned.reserve(1 + python.prefixArgs.size() + tailArgs.size());
     owned.push_back(python.executable);
