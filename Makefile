@@ -40,4 +40,4 @@ release-check: release-build
 	@echo "PacRipper V1.0 local release gates: PASS"
 
 clean:
-	rm -rf obj/core_make bin/PacRipper bin/PacRipperCore bin/PacRipper.exe bin/PacRipperCore.exe
+	rm -rf obj/core_make obj/macos bin/PacRipper bin/PacRipperCore bin/PacRipper.exe bin/PacRipperCore.exe
