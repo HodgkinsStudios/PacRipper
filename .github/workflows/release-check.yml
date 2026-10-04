@@ -90,6 +90,10 @@ jobs:
         shell: cmd
         run: call build_windows_mingw.bat
 
+      - name: Stage standalone Windows package
+        shell: cmd
+        run: call package_windows.bat
+
       - name: Run Windows ROM-free runtime gates
         shell: cmd
         run: |
@@ -97,6 +101,7 @@ jobs:
           python scripts\release_terminology_audit.py .
           python scripts\test_archive_safety.py
           python scripts\test_windows_runtime.py
+          python dist\PacRipper-Windows\scripts\test_windows_runtime.py
 
       - name: Confirm repository contains no ROM archives or generated outputs
         shell: pwsh
@@ -110,12 +115,10 @@ jobs:
           }
           Write-Host "Repository artifact guard: PASS"
 
-      - name: Upload Windows binaries
+      - name: Upload standalone Windows package
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: PacRipper-Windows-MinGW
-          path: |
-            bin/PacRipper.exe
-            bin/PacRipperCore.exe
+          path: dist/PacRipper-Windows
           if-no-files-found: error
