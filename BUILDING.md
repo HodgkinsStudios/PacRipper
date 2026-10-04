@@ -127,6 +127,48 @@ The default output is `dist\PacRipper-Windows`. You can also pass a custom desti
 
 The public GitHub Actions Windows job builds both executables and runs `scripts/test_windows_runtime.py`, which verifies the launcher, synthetic ZIP/7z extraction, explicit Python selection, unrelated working directories, and non-ASCII paths. It then stages `dist\PacRipper-Windows` and runs the same runtime suite from that clean package before publishing the package as the `PacRipper-Windows-MinGW` artifact. The exact Pac-Man/Puckman reconstruction tests remain local release checks because copyrighted ROM references are intentionally absent from public CI.
 
+## Docker / OCI
+
+The Docker image is intended to provide a consistent PacRipper runtime on Linux distributions that are not built natively by this repository. A host only needs Docker Engine, Docker Desktop, or a compatible Podman installation.
+
+Build locally:
+
+```bash
+docker build -t pacripper:local .
+```
+
+Verify the image:
+
+```bash
+docker run --rm pacripper:local --version
+PACRIPPER_DOCKER_IMAGE=pacripper:local python3 scripts/test_docker_runtime.py
+```
+
+The image uses a multi-stage Debian build. The build stage compiles both C++17 executables from source with the same strict warning policy used by the release build. The runtime stage contains only the PacRipper runtime tree plus Python 3, libarchive, 7-Zip, and the required GNU C++ runtime libraries. Repository `bin/` files are excluded from the Docker build context and are rebuilt inside the image.
+
+Normal usage with a host directory mounted at `/work`:
+
+```bash
+mkdir -p PacMan_Disassembly
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -v "$PWD:/work" \
+  ghcr.io/hodgkinsstudios/pacripper:latest \
+  /work/pacman.7z /work/PacMan_Disassembly
+```
+
+Using `--user` keeps generated files owned by the invoking Linux user instead of root. On SELinux-enforcing hosts, use `-v "$PWD:/work:Z"`. Podman users can use the same arguments with `podman run`.
+
+The CI Docker runtime suite validates the version entrypoint, package completeness, non-root bind mounts, non-ASCII paths, synthetic ZIP input, and synthetic 7z input. On pushes to `main`, a separate publish job uses Buildx/QEMU to publish both `linux/amd64` and `linux/arm64` manifests to:
+
+```text
+ghcr.io/hodgkinsstudios/pacripper:latest
+ghcr.io/hodgkinsstudios/pacripper:1.0
+ghcr.io/hodgkinsstudios/pacripper:1.0.0
+```
+
+The Docker build context explicitly excludes ROM archives, generated assembly, local outputs, native prebuilt binaries, and build caches.
+
 ## Runtime layout
 
 Keep these directories together:
