@@ -113,7 +113,7 @@ Strict public-release build gate:
 make release-check
 ```
 
-Native Windows/MinGW support is included and continuously built on GitHub Actions. Build with `build_windows_mingw.bat` or choose the `Windows Release` targets in the Code::Blocks workspace. The Windows CI gate builds both executables, runs synthetic ZIP/7z archive tests, verifies launcher behavior from an unrelated working directory, and exercises non-ASCII Windows paths. Exact Pac-Man/Puckman round-trip certification still requires lawfully supplied external ROM references and therefore is not performed in public CI. See `BUILDING.md`.
+Native Windows/MinGW support is included and continuously built on GitHub Actions. Build with `build_windows_mingw.bat` or choose the `Windows Release` targets in the Code::Blocks workspace. Run `package_windows.bat` after building to stage a self-contained `dist\PacRipper-Windows` package containing the executables plus the runtime scripts, semantic data, configuration, documentation, and notices. The Windows CI gate builds both executables, runs synthetic ZIP/7z archive tests, verifies launcher behavior from an unrelated working directory, exercises non-ASCII Windows paths, and reruns the runtime suite from the staged standalone package before publishing it as an artifact. Exact Pac-Man/Puckman round-trip certification still requires lawfully supplied external ROM references and therefore is not performed in public CI. See `BUILDING.md`.
 
 ## ROM-free distribution
 

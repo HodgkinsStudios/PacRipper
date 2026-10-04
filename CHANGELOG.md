@@ -9,6 +9,7 @@
 - Hardened the MinGW batch build with strict warnings and static GCC/libstdc++ runtime linkage.
 - Added dedicated Code::Blocks `Windows Release` targets.
 - Added GitHub Actions Windows build/runtime gates with synthetic ZIP/7z and Unicode-path tests.
+- Added `package_windows.bat` and CI validation/publication of a self-contained standalone Windows package.
 
 ## V1.0 — 2026-09-01
 
