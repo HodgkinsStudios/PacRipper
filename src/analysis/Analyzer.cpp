@@ -278,11 +278,11 @@ void Analyzer::rebuildDataCandidates() {
         if(len>=2 && !overlapsPointer) {
             DataCandidate c; c.start=start; c.end=end; c.kind=CandidateKind::ByteLookupTable; c.confidence=60;
             c.staticRefPCs=collectImmediatePointerRefs(start,end,false);
-            std::size_t low6=0, textish=0, low5Even=0, low5Odd=0, pairShared=0, pairs=0;
+            std::size_t textish=0, low5Even=0, low5Odd=0, pairShared=0, pairs=0;
             std::uint8_t evenMin=0xFF,evenMax=0,oddMin=0xFF,oddMax=0;
             std::set<std::uint8_t> unique;
             for(std::uint16_t p=start;p<end;++p) {
-                const std::uint8_t v=program_[p]; unique.insert(v); if(v<=0x3F) ++low6;
+                const std::uint8_t v=program_[p]; unique.insert(v);
                 if((v>=0x40 && v<=0x5A) || v==0x2F || v==0x3A || v==0x8F || v==0x00) ++textish;
                 const auto r=romDataUsage_.find(p);
                 if(r!=romDataUsage_.end()) {
