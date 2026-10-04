@@ -1,5 +1,6 @@
 # PacRipper local build/runtime artifacts
 obj/
+dist/
 __pycache__/
 *.pyc
 *.pyo

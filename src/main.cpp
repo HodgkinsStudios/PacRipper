@@ -1,5 +1,6 @@
 // PacRipper public command-line front end
 // Created by Jacob Hodgkins
+#include <cstdint>
 #include <cstdlib>
 #include <filesystem>
 #include <iostream>
@@ -14,6 +15,9 @@
 #include <process.h>
 #include <windows.h>
 #else
+#ifdef __APPLE__
+#include <mach-o/dyld.h>
+#endif
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
@@ -37,15 +41,43 @@ bool commandExists(const char* command) {
     return std::system(test.c_str()) == 0;
 }
 
+fs::path executablePathPosix(const char* argv0) {
+#ifdef __APPLE__
+    (void)argv0;
+    // argv[0] may be only a command name or a symlink when PacRipper is launched
+    // through PATH. Ask dyld for the actual Mach-O executable path so a packaged
+    // build can always locate ../scripts regardless of the process cwd.
+    std::vector<char> buffer(1024);
+    for (;;) {
+        std::uint32_t size = static_cast<std::uint32_t>(buffer.size());
+        if (_NSGetExecutablePath(buffer.data(), &size) == 0) {
+            std::error_code ec;
+            const fs::path path(buffer.data());
+            const fs::path canonical = fs::weakly_canonical(path, ec);
+            return ec ? path : canonical;
+        }
+        if (size <= buffer.size() || size > 1024U * 1024U)
+            return {};
+        buffer.resize(size);
+    }
+#else
+    std::error_code ec;
+    const fs::path executable = fs::absolute(fs::path(argv0), ec);
+    return ec ? fs::path{} : executable;
+#endif
+}
+
 fs::path findRoot(const char* argv0) {
     std::vector<fs::path> candidates;
     std::error_code ec;
     candidates.push_back(fs::current_path(ec));
-    const fs::path executable = fs::absolute(fs::path(argv0), ec);
-    if (!ec) {
+
+    const fs::path executable = executablePathPosix(argv0);
+    if (!executable.empty()) {
         candidates.push_back(executable.parent_path());
         candidates.push_back(executable.parent_path().parent_path());
     }
+
     for (const auto& candidate : candidates) {
         ec.clear();
         if (!candidate.empty() && fs::is_regular_file(candidate / "scripts" / "pacripper_pipeline.py", ec))

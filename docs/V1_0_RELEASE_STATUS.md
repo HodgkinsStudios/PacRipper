@@ -46,6 +46,10 @@ The distributable contains no canonical ROM/PROM payload, generated program ASM,
 
 ## Platform note
 
-The original V1.0 release certification and supplied prebuilt executables were produced on Linux. The source tree now also contains a completed native Windows/MinGW port with dedicated Code::Blocks targets and a Windows GitHub Actions gate that builds both executables and exercises ROM-free launcher/archive behavior, including synthetic 7z and Unicode paths.
+The original V1.0 release certification and supplied prebuilt executables were produced on Linux. The source tree now also contains completed native Windows/MinGW and macOS/Apple Clang ports.
+
+The Windows port has dedicated Code::Blocks targets plus a Windows GitHub Actions gate that builds both executables and exercises ROM-free launcher/archive behavior, including synthetic 7z and Unicode paths.
+
+The macOS port produces universal Intel (`x86_64`) + Apple Silicon (`arm64`) Mach-O executables, has dedicated Code::Blocks targets, resolves its packaged executable location through dyld, and has a macOS GitHub Actions gate that validates synthetic ZIP/7z handling, Unicode paths, explicit Python selection, universal slices, and the staged standalone package.
 
 Exact Pac-Man/Puckman round-trip certification is still performed only with lawfully supplied external reference sets and is intentionally not run in public CI.

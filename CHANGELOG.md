@@ -1,5 +1,15 @@
 # Changelog
 
+## Unreleased — macOS port
+
+- Added a native Apple Clang/libc++ build path for macOS.
+- Added universal `x86_64` + `arm64` Mach-O binaries with a macOS 11 deployment target.
+- Added dyld-based executable discovery so packaged launches do not depend on `argv[0]` or the current working directory.
+- Added dedicated Code::Blocks `macOS Universal Release` targets.
+- Added ROM-free macOS runtime tests covering Unicode paths, explicit Python selection, synthetic ZIP/7z input, and universal slices.
+- Added `package_macos.sh` and a permission-preserving universal macOS tarball.
+- Added a GitHub Actions macOS gate that validates the source tree and staged package before publishing `PacRipper-macOS-Universal`.
+
 ## Unreleased — Windows port
 
 - Completed the native Windows/MinGW launcher path with Unicode command-line handling.

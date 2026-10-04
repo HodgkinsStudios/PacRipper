@@ -57,9 +57,15 @@ ROM policy:
   dual-reference strict ROM-free audit: scripts/strict_rom_free_audit.py
 
 Release gates:
-  make release-check
+  Linux: make release-check
+  Windows: build_windows_mingw.bat + scripts/test_windows_runtime.py + staged-package retest
+  macOS: build_macos.sh universal x86_64+arm64 + scripts/test_macos_runtime.py + staged-package retest
   scripts/test_certified_variants.py against both external canonical references
   scripts/strict_rom_free_audit.py against both external canonical references
+
+Standalone packaging:
+  Windows: package_windows.bat -> dist/PacRipper-Windows
+  macOS: package_macos.sh -> dist/PacRipper-macOS + dist/PacRipper-macOS-universal.tar.gz
 
 GitHub repository packaging:
   .github/workflows/release-check.yml runs only ROM-free local gates

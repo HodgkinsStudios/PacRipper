@@ -107,13 +107,24 @@ Ubuntu/Linux build:
 ./build_ubuntu.sh
 ```
 
+Native macOS universal build (Intel + Apple Silicon):
+
+```bash
+./build_macos.sh
+./package_macos.sh
+```
+
+The macOS package contains universal `x86_64` + `arm64` Mach-O executables and is staged as `dist/PacRipper-macOS`, with a permission-preserving `dist/PacRipper-macOS-universal.tar.gz` archive for distribution.
+
 Strict public-release build gate:
 
 ```bash
 make release-check
 ```
 
-Native Windows/MinGW support is included and continuously built on GitHub Actions. Build with `build_windows_mingw.bat` or choose the `Windows Release` targets in the Code::Blocks workspace. Run `package_windows.bat` after building to stage a self-contained `dist\PacRipper-Windows` package containing the executables plus the runtime scripts, semantic data, configuration, documentation, and notices. The Windows CI gate builds both executables, runs synthetic ZIP/7z archive tests, verifies launcher behavior from an unrelated working directory, exercises non-ASCII Windows paths, and reruns the runtime suite from the staged standalone package before publishing it as an artifact. Exact Pac-Man/Puckman round-trip certification still requires lawfully supplied external ROM references and therefore is not performed in public CI. See `BUILDING.md`.
+Native macOS support is included and continuously built on GitHub Actions. `build_macos.sh` uses Apple Clang/libc++ to produce universal Intel (`x86_64`) + Apple Silicon (`arm64`) executables with a macOS 11 deployment target by default. The macOS launcher resolves the actual Mach-O executable location through dyld, so the package works when launched from another working directory or through PATH. `package_macos.sh` stages the complete runtime and creates a permission-preserving tarball. The macOS CI gate runs synthetic ZIP/7z tests, non-ASCII path coverage, explicit Python selection, universal-binary checks, and repeats the runtime suite from the staged package.
+
+Native Windows/MinGW support is also continuously built on GitHub Actions. Build with `build_windows_mingw.bat` or choose the `Windows Release` targets in the Code::Blocks workspace. Run `package_windows.bat` after building to stage a self-contained `dist\PacRipper-Windows` package containing the executables plus the runtime scripts, semantic data, configuration, documentation, and notices. The Windows CI gate builds both executables, runs synthetic ZIP/7z archive tests, verifies launcher behavior from an unrelated working directory, exercises non-ASCII Windows paths, and reruns the runtime suite from the staged standalone package before publishing it as an artifact. Exact Pac-Man/Puckman round-trip certification still requires lawfully supplied external ROM references and therefore is not performed in public CI. See `BUILDING.md`.
 
 ## ROM-free distribution
 
@@ -146,7 +157,7 @@ See:
 
 ## GitHub repository checks
 
-The repository includes a ROM-free GitHub Actions workflow at `.github/workflows/release-check.yml`. Linux runs the strict C++ release build, Python syntax checks, public terminology audit, synthetic archive/output safety tests, and repository artifact guard. Windows separately builds the native MinGW executables and runs the Windows runtime smoke suite, including synthetic ZIP/7z and Unicode-path coverage. Neither job uses or downloads copyrighted ROM data.
+The repository includes a ROM-free GitHub Actions workflow at `.github/workflows/release-check.yml`. Linux runs the strict C++ release build, Python syntax checks, public terminology audit, synthetic archive/output safety tests, and repository artifact guard. Windows separately builds the native MinGW executables and runs the Windows runtime smoke suite. macOS separately builds universal Apple Clang binaries, validates both `x86_64` and `arm64` slices, runs synthetic ZIP/7z and Unicode-path coverage, retests from the standalone staged package, and publishes the universal macOS package artifact. None of these jobs uses or downloads copyrighted ROM data.
 
 The exact Pac-Man and Puckman reconstruction certifications cannot run in public CI because PacRipper intentionally does not distribute the required ROM/PROM inputs. Maintainers perform those release-only checks locally with lawfully supplied external references using `scripts/test_certified_variants.py`, followed by `scripts/strict_rom_free_audit.py` against both supported reference sets.
 

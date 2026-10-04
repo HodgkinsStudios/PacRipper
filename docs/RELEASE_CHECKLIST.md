@@ -2,7 +2,9 @@
 
 A public release is accepted only when all of these gates pass:
 
-- [ ] `make release-check` succeeds from a clean tree.
+- [ ] `make release-check` succeeds from a clean Linux tree.
+- [ ] Windows MinGW CI builds and passes `scripts/test_windows_runtime.py` from both the source tree and staged Windows package.
+- [ ] macOS CI builds universal `x86_64` + `arm64` binaries and passes `scripts/test_macos_runtime.py` from both the source tree and staged macOS package.
 - [ ] Pac-Man direct `pacman.7z` run succeeds from a fresh package extraction.
 - [ ] Pac-Man `program/pacman.asm` assembles with SjASMPlus with 0 errors / 0 warnings.
 - [ ] Pac-Man reconstructs 10/10 physical files, 25,376/25,376 bytes exact.
@@ -14,4 +16,4 @@ A public release is accepted only when all of these gates pass:
 - [ ] No user ROM archive, generated disassembly tree, cache, object file, or test payload is packaged unintentionally.
 - [ ] `LICENSE`, `THIRD_PARTY_NOTICES.md`, `SECURITY.md`, `CHANGELOG.md`, and legal-output documentation are present.
 - [ ] Shipping permissions are normalized (755 executables/scripts; 644 source/docs/configuration).
-- [ ] Release ZIP SHA-256 is recorded with the published release.
+- [ ] Published release artifact SHA-256 values are recorded (including the permission-preserving macOS tarball).
