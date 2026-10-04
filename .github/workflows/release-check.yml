@@ -2,7 +2,7 @@ name: Release Check
 
 on:
   push:
-    branches: ["main", "master"]
+    branches: ["main", "master", "windows-package-final-2026-10-04"]
   pull_request:
   workflow_dispatch:
 
