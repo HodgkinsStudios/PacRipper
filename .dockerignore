@@ -1,0 +1,31 @@
+# PacRipper Docker build context
+# Created by Jacob Hodgkins
+
+.git
+.github
+obj
+dist
+__pycache__
+*.pyc
+*.pyo
+*.o
+*.obj
+*.tmp
+*.log
+.DS_Store
+Thumbs.db
+.vscode
+.idea
+
+# Never send user/game archives or generated ROM/disassembly payloads to the image build context.
+*.7z
+*.rar
+*.rom
+*.prom
+*.bin
+*.asm
+PacMan_Disassembly
+Puckman_Disassembly
+
+# Native prebuilt binaries are intentionally rebuilt inside the container.
+bin
