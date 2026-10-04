@@ -65,6 +65,7 @@ jobs:
           python-version: "3.12"
 
       - name: Set up MinGW-w64
+        id: msys2
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
