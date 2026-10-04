@@ -43,6 +43,7 @@ bool commandExists(const char* command) {
 
 fs::path executablePathPosix(const char* argv0) {
 #ifdef __APPLE__
+    (void)argv0;
     // argv[0] may be only a command name or a symlink when PacRipper is launched
     // through PATH. Ask dyld for the actual Mach-O executable path so a packaged
     // build can always locate ../scripts regardless of the process cwd.
