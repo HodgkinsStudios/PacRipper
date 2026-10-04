@@ -50,7 +50,44 @@ python3 scripts/strict_rom_free_audit.py . /path/to/pacman.7z /path/to/puckman.z
 
 ## Code::Blocks
 
-Open `PacRipper.workspace`. On Linux, build the normal `Release` targets. On Windows, select the `Windows Release` target for both projects; `PacRipper` depends on `PacRipperCore`, so both executables are produced. The Windows targets use C++17, MinGW-w64, static libgcc/libstdc++ runtime linkage, and `-lstdc++fs` for compatibility with older MinGW toolchains.
+Open `PacRipper.workspace`. On Linux, build the normal `Release` targets. On Windows, select the `Windows Release` target for both projects. On macOS, select `macOS Universal Release` for both projects. `PacRipper` depends on `PacRipperCore`, so both executables are produced. The Windows targets use C++17, MinGW-w64, static libgcc/libstdc++ runtime linkage, and `-lstdc++fs` for compatibility with older MinGW toolchains. The macOS targets use Apple Clang/libc++, a macOS 11 deployment target, and produce universal `x86_64` + `arm64` Mach-O binaries.
+
+## macOS / Apple Clang
+
+Requirements:
+
+- macOS 11 or newer;
+- Xcode Command Line Tools / Apple Clang with C++17 support;
+- Python 3;
+- 7-Zip/`7zz` only if the system libarchive cannot read a supplied `.7z` archive.
+
+Build the universal Intel + Apple Silicon binaries with:
+
+```bash
+chmod +x build_macos.sh package_macos.sh
+./build_macos.sh
+```
+
+This produces:
+
+```text
+bin/PacRipper
+bin/PacRipperCore
+```
+
+By default each executable contains both `x86_64` and `arm64` slices and targets macOS 11+. The build is strict (`-Wall -Wextra -Wpedantic -Werror`) and uses the platform C++ runtime (`libc++`), so no GNU `libstdc++fs` compatibility library is linked. `MACOSX_DEPLOYMENT_TARGET` may be set to a newer minimum version. `PACRIPPER_MAC_ARCHS` may be overridden for developer-only single-architecture builds, but the public CI package is always validated as universal.
+
+The macOS launcher asks dyld for the actual executable path rather than trusting `argv[0]`. That lets a staged package locate `scripts/pacripper_pipeline.py` correctly when launched from another working directory, through a symlink/PATH entry, or from a path containing non-ASCII characters.
+
+To stage the complete runtime and create the distributable archive:
+
+```bash
+./package_macos.sh
+```
+
+The default staged folder is `dist/PacRipper-macOS`; the default archive is `dist/PacRipper-macOS-universal.tar.gz`. The tarball is used so executable permission bits survive artifact/download handling.
+
+The public GitHub Actions macOS job builds both universal binaries and runs `scripts/test_macos_runtime.py`. The test suite verifies both architecture slices, launcher package discovery from an unrelated working directory, explicit `PACRIPPER_PYTHON` selection, Unicode paths, synthetic ZIP extraction, and synthetic 7z extraction. The same suite is rerun against the staged package before the tarball is published as the `PacRipper-macOS-Universal` artifact. Copyrighted Pac-Man/Puckman ROM inputs are not uploaded to public CI.
 
 ## Windows / MinGW
 
@@ -101,4 +138,4 @@ PacRipper/
   semantic/
 ```
 
-The front end locates `scripts/pacripper_pipeline.py` relative to the executable/project directory and fails explicitly if the package is incomplete.
+The front end locates `scripts/pacripper_pipeline.py` relative to the executable/project directory and fails explicitly if the package is incomplete. On macOS, the true Mach-O path is obtained from dyld so package discovery does not depend on the current working directory or the textual value of `argv[0]`.
