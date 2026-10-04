@@ -2,7 +2,7 @@
 
 **Created by Jacob Hodgkins**
 
-This package is intentionally ROM-free. It contains the PacRipper C++ source, deterministic dual-variant release scripts and semantic metadata, Code::Blocks/command-line build files, documentation, licensing/provenance/security files, and the PacRipper Linux executables.
+This package is intentionally ROM-free. It contains the PacRipper C++ source, deterministic dual-variant release scripts and semantic metadata, Code::Blocks/command-line build files for Linux, Windows, and macOS, documentation, licensing/provenance/security files, and the checked-in PacRipper Linux executables. Native Windows and universal macOS packages are built and validated by GitHub Actions rather than committed as binary copies.
 
 It does **not** contain:
 
