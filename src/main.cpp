@@ -221,6 +221,41 @@ fs::path findRootWindows() {
     return {};
 }
 
+std::wstring quoteWindowsArgument(const std::wstring& arg) {
+    if (arg.empty()) return L"\\\"\\\"";
+
+    const bool needsQuotes =
+        arg.find_first_of(L" \\t\\\"") != std::wstring::npos;
+    if (!needsQuotes) return arg;
+
+    std::wstring out;
+    out.push_back(L'\\\"');
+    std::size_t backslashes = 0;
+
+    for (const wchar_t ch : arg) {
+        if (ch == L'\\\\') {
+            ++backslashes;
+            continue;
+        }
+
+        if (ch == L'\\\"') {
+            out.append(backslashes * 2 + 1, L'\\\\');
+            out.push_back(L'\\\"');
+            backslashes = 0;
+            continue;
+        }
+
+        out.append(backslashes, L'\\\\');
+        backslashes = 0;
+        out.push_back(ch);
+    }
+
+    // Backslashes immediately before the closing quote must be doubled.
+    out.append(backslashes * 2, L'\\\\');
+    out.push_back(L'\\\"');
+    return out;
+}
+
 int spawnWindows(const PythonCommand& python, const std::vector<std::wstring>& tailArgs) {
     std::vector<std::wstring> owned;
     owned.reserve(1 + python.prefixArgs.size() + tailArgs.size());
@@ -228,13 +263,41 @@ int spawnWindows(const PythonCommand& python, const std::vector<std::wstring>& t
     owned.insert(owned.end(), python.prefixArgs.begin(), python.prefixArgs.end());
     owned.insert(owned.end(), tailArgs.begin(), tailArgs.end());
 
-    std::vector<const wchar_t*> argv;
-    argv.reserve(owned.size() + 1);
-    for (const auto& item : owned) argv.push_back(item.c_str());
-    argv.push_back(nullptr);
+    std::wstring commandLine;
+    for (const auto& item : owned) {
+        if (!commandLine.empty()) commandLine.push_back(L' ');
+        commandLine += quoteWindowsArgument(item);
+    }
 
-    const intptr_t rc = _wspawnvp(_P_WAIT, python.executable.c_str(), argv.data());
-    return rc < 0 ? 127 : static_cast<int>(rc);
+    std::vector<wchar_t> mutableCommand(commandLine.begin(), commandLine.end());
+    mutableCommand.push_back(L'\\0');
+
+    STARTUPINFOW startup{};
+    startup.cb = sizeof(startup);
+    PROCESS_INFORMATION process{};
+
+    if (!CreateProcessW(
+            nullptr,
+            mutableCommand.data(),
+            nullptr,
+            nullptr,
+            FALSE,
+            0,
+            nullptr,
+            nullptr,
+            &startup,
+            &process)) {
+        return 127;
+    }
+
+    const DWORD waitResult = WaitForSingleObject(process.hProcess, INFINITE);
+    DWORD exitCode = 127;
+    if (waitResult == WAIT_OBJECT_0)
+        GetExitCodeProcess(process.hProcess, &exitCode);
+
+    CloseHandle(process.hThread);
+    CloseHandle(process.hProcess);
+    return static_cast<int>(exitCode);
 }
 
 bool isPython3(const PythonCommand& python) {
