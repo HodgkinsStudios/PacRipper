@@ -72,18 +72,22 @@ jobs:
           install: >-
             mingw-w64-x86_64-gcc
 
-      - name: Show Windows toolchain
+      - name: Resolve MinGW compiler
+        shell: msys2 {0}
+        run: |
+          g++ --version
+          printf 'MINGW_CXX=%s\n' "$(cygpath -w "$(command -v g++)")" >> "$GITHUB_ENV"
+
+      - name: Show Windows runtime tools
         shell: cmd
         run: |
-          C:\msys64\mingw64\bin\g++.exe --version
           python --version
           where 7z
+          echo MINGW_CXX=%MINGW_CXX%
 
       - name: Build native Windows binaries
         shell: cmd
-        run: |
-          set "MINGW_CXX=C:\msys64\mingw64\bin\g++.exe"
-          call build_windows_mingw.bat
+        run: call build_windows_mingw.bat
 
       - name: Run Windows ROM-free runtime gates
         shell: cmd
