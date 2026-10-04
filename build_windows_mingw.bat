@@ -24,7 +24,8 @@ set "INCLUDES=-Isrc"
 set "LINK_RUNTIME=-static-libgcc -static-libstdc++ -lstdc++fs"
 
 del /Q obj\windows\*.o 2>NUL
-set "OBJS="
+set "OBJLIST=obj\windows\core_objects.rsp"
+type NUL > "%OBJLIST%"
 set /A OBJINDEX=0
 
 for /F "usebackq tokens=* delims=" %%S in ("config\core_sources.txt") do (
@@ -36,7 +37,7 @@ for /F "usebackq tokens=* delims=" %%S in ("config\core_sources.txt") do (
     echo [CXX] !SRC!
     "%CXX%" %COMMON% %INCLUDES% -c "!SRC!" -o "!OBJ!"
     if errorlevel 1 exit /b 1
-    set "OBJS=!OBJS! "!OBJ!""
+    >>"%OBJLIST%" echo "!OBJ!"
   )
 )
 
@@ -45,7 +46,7 @@ echo [CXX] src\pacripper_core_main.cpp
 if errorlevel 1 exit /b 1
 
 echo [LINK] bin\PacRipperCore.exe
-"%CXX%" -std=c++17 -O2 -o bin\PacRipperCore.exe !OBJS! obj\windows\pacripper_core_main.o %LINK_RUNTIME%
+"%CXX%" -std=c++17 -O2 -o bin\PacRipperCore.exe @"%OBJLIST%" obj\windows\pacripper_core_main.o %LINK_RUNTIME%
 if errorlevel 1 exit /b 1
 
 echo [LINK] bin\PacRipper.exe
