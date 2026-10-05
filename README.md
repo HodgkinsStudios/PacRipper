@@ -203,7 +203,7 @@ python3 scripts/strict_rom_free_audit.py . /path/to/pacman.7z /path/to/puckman.z
 - [Architecture](docs/ARCHITECTURE.md)
 - [Archive and output safety](docs/ARCHIVE_AND_OUTPUT_SAFETY.md)
 - [Release certification](docs/PACRIPPER_RELEASE_CERTIFICATION.md)
-- [Release status](docs/V1_0_RELEASE_STATUS.md)
+- [Release status](docs/RELEASE_STATUS.md)
 - [ROM-free release audit](docs/ROM_FREE_RELEASE_AUDIT.md)
 - [Legal and generated-output policy](docs/LEGAL_AND_OUTPUT_POLICY.md)
 - [Contributing](CONTRIBUTING.md)
