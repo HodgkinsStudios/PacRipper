@@ -69,7 +69,7 @@ def main() -> int:
     require(EXE.is_file(), f"PacRipper Windows executable is missing: {EXE}")
 
     version = run_checked([str(EXE), "--version"], cwd=ROOT)
-    require(version.stdout.strip() == "PacRipper 1.0.0", "unexpected --version output")
+    require(version.stdout.strip() == "PacRipper 1.0", "unexpected --version output")
 
     seven = _find_7z_executable()
     require(seven is not None, "7-Zip was not found; Windows .7z runtime coverage is required")
