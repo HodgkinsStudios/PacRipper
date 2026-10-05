@@ -5,6 +5,7 @@ Created by Jacob Hodgkins.
 from __future__ import annotations
 
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -77,8 +78,15 @@ def main() -> int:
                 line = text.count("\n", 0, match.start()) + 1
                 errors.append(f"{rel}:{line}: {description}")
 
-    if (root / "bin" / "PacRipper").exists() or (root / "bin" / "PacRipperCore").exists():
-        errors.append("compiled Linux binaries must not be committed under bin/")
+    for rel in ("bin/PacRipper", "bin/PacRipperCore"):
+        tracked = subprocess.run(
+            ["git", "-C", str(root), "ls-files", "--error-unmatch", rel],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+        )
+        if tracked.returncode == 0:
+            errors.append(f"generated binary is tracked by Git: {rel}")
 
     if errors:
         print("PacRipper 1.0 release metadata audit: FAIL")
