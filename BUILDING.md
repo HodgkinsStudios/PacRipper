@@ -159,7 +159,7 @@ docker run --rm \
 
 Using `--user` keeps generated files owned by the invoking Linux user instead of root. On SELinux-enforcing hosts, use `-v "$PWD:/work:Z"`. Podman users can use the same arguments with `podman run`.
 
-The CI Docker runtime suite validates the version entrypoint, package completeness, non-root bind mounts, non-ASCII paths, synthetic ZIP input, and synthetic 7z input. On pushes to `main`, a separate publish job uses Buildx/QEMU to publish both `linux/amd64` and `linux/arm64` manifests to:
+The CI Docker runtime suite validates the version entrypoint, package completeness, non-root bind mounts, non-ASCII paths, synthetic ZIP input, and synthetic 7z input. On pushes to `main`, CI builds and tests `linux/amd64` on a native x86-64 runner and `linux/arm64` on GitHub's native ARM64 Linux runner. Each architecture is published separately with provenance/SBOM metadata, then a final manifest job combines them into the public multi-architecture tags. This avoids slow QEMU compilation for the large C++ core and validates both architectures natively before publication:
 
 ```text
 ghcr.io/hodgkinsstudios/pacripper:latest

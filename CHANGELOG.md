@@ -8,6 +8,7 @@
 - Added non-root host-user, Unicode-path, synthetic ZIP, and synthetic 7z container runtime tests.
 - Added a strict `.dockerignore` that excludes ROM/archive/generated-output payloads and checked-in native binaries from the build context.
 - Added GitHub Actions validation plus multi-architecture `linux/amd64` and `linux/arm64` publication to GHCR.
+- Switched multi-architecture publication from QEMU compilation to native x86-64 and ARM64 GitHub runners, with native runtime tests for both architectures before the final manifest is created.
 
 ## Unreleased — macOS port
 
