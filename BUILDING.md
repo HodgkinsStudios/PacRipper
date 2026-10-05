@@ -1,13 +1,13 @@
-# Building PacRipper V1.0
+# Building PacRipper 1.0
 
 **Created by Jacob Hodgkins**
 
-PacRipper contains two C++17 executables:
+PacRipper 1.0 contains two C++17 executables:
 
 - `PacRipper` — public CLI/orchestration entry point.
 - `PacRipperCore` — private program/resource analysis helper invoked by PacRipper.
 
-The same binaries support both certified inputs (`pacman.7z` and `puckman.zip`).
+The same binaries support both certified inputs (`pacman.7z` and `puckman.zip`). The canonical release version is stored in the top-level `VERSION` file.
 
 ## Ubuntu / GCC
 
@@ -164,7 +164,6 @@ The CI Docker runtime suite validates the version entrypoint, package completene
 ```text
 ghcr.io/hodgkinsstudios/pacripper:latest
 ghcr.io/hodgkinsstudios/pacripper:1.0
-ghcr.io/hodgkinsstudios/pacripper:1.0.0
 ```
 
 The Docker build context explicitly excludes ROM archives, generated assembly, local outputs, native prebuilt binaries, and build caches.
