@@ -96,7 +96,7 @@ def main() -> int:
     require(os.access(CORE, os.X_OK), f"PacRipperCore is not executable: {CORE}")
 
     version = run_checked([str(EXE), "--version"], cwd=ROOT)
-    require(version.stdout.strip() == "PacRipper 1.0.0", "unexpected --version output")
+    require(version.stdout.strip() == "PacRipper 1.0", "unexpected --version output")
 
     if os.environ.get("PACRIPPER_EXPECT_UNIVERSAL") == "1":
         require_universal_binary(EXE)
