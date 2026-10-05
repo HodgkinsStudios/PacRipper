@@ -15,10 +15,12 @@ TEXT_SUFFIXES = {
     "", ".bat", ".cff", ".cpp", ".h", ".json", ".md", ".py", ".sh", ".txt", ".yml", ".yaml"
 }
 
+LEGACY_PATCH_VERSION = EXPECTED_VERSION + ".0"
+
 FORBIDDEN = (
-    (re.compile(r"(?<!\d)1\.0\.0(?!\d)"), "legacy version 1.0.0"),
-    (re.compile(r"\bv1\.0\.0\b", re.IGNORECASE), "legacy tag v1.0.0"),
-    (re.compile(r"\bUnreleased\b", re.IGNORECASE), "unfinished release wording"),
+    (re.compile(rf"(?<!\\d){re.escape(LEGACY_PATCH_VERSION)}(?!\\d)"), "legacy patch-level project version"),
+    (re.compile(rf"\\bv{re.escape(LEGACY_PATCH_VERSION)}\\b", re.IGNORECASE), "legacy patch-level release tag"),
+    (re.compile(r"\\bUnreleased\\b", re.IGNORECASE), "unfinished release wording"),
 )
 
 REQUIRED_MARKERS = {
