@@ -20,10 +20,10 @@ LEGACY_PATCH_VERSION = EXPECTED_VERSION + ".0"
 LEGACY_V_PREFIX = "V" + EXPECTED_VERSION
 
 FORBIDDEN = (
-    (re.compile(rf"(?<!\\d){re.escape(LEGACY_PATCH_VERSION)}(?!\\d)"), "legacy patch-level project version"),
-    (re.compile(rf"\\bv{re.escape(LEGACY_PATCH_VERSION)}\\b", re.IGNORECASE), "legacy patch-level release tag"),
-    (re.compile(rf"\\b{re.escape(LEGACY_V_PREFIX)}\\b"), "legacy V-prefixed project version"),
-    (re.compile(r"\\bUnreleased\\b", re.IGNORECASE), "unfinished release wording"),
+    (re.compile(rf"(?<!\d){re.escape(LEGACY_PATCH_VERSION)}(?!\d)"), "legacy patch-level project version"),
+    (re.compile(rf"\bv{re.escape(LEGACY_PATCH_VERSION)}\b", re.IGNORECASE), "legacy patch-level release tag"),
+    (re.compile(rf"\b{re.escape(LEGACY_V_PREFIX)}\b"), "legacy V-prefixed project version"),
+    (re.compile(r"\bUnreleased\b", re.IGNORECASE), "unfinished release wording"),
 )
 
 REQUIRED_MARKERS = {
