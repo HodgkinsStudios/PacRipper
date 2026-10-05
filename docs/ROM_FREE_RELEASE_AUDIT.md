@@ -1,4 +1,4 @@
-# PacRipper V1.0 Strict ROM-Free Release Audit
+# PacRipper 1.0 Strict ROM-Free Release Audit
 
 **Created by Jacob Hodgkins**
 
@@ -18,7 +18,7 @@ python3 scripts/strict_rom_free_audit.py . /path/to/pacman.7z /path/to/puckman.z
 
 The verifier rejects complete reference files, generated ASM/ROM/PROM/archive artifacts, nested compressed payloads, historical raw-byte proof idioms, meaningful high-entropy ROM subsequences, reconstructive source literal blocks, encoded ROM payloads and standard compressed copies.
 
-The certified V1.0 audit covers **26 physical reference files across 2 canonical sets**. Metadata such as names, sizes, CRC/SHA hashes, opcodes, addresses and semantic identifiers is intentionally permitted because those values are not ROM payload copies.
+The certified 1.0 audit covers **26 physical reference files across 2 canonical sets**. Metadata such as names, sizes, CRC/SHA hashes, opcodes, addresses and semantic identifiers is intentionally permitted because those values are not ROM payload copies.
 
 ## Functional regression requirement
 
