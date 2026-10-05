@@ -36,6 +36,7 @@ release-build:
 release-check: release-build
 	python3 -m compileall -q scripts
 	python3 scripts/release_terminology_audit.py .
+	python3 scripts/release_metadata_audit.py .
 	python3 scripts/test_archive_safety.py
 	@echo "PacRipper V1.0 local release gates: PASS"
 
