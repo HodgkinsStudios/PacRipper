@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Created by Jacob Hodgkins
-"""Run PacRipper V1.0's two independent certified source round trips.
+"""Run PacRipper 1.0's two independent certified source round trips.
 
 Usage:
   python3 scripts/test_certified_variants.py <pacman.7z> <puckman.zip> <sjasmplus>
@@ -41,7 +41,7 @@ def main() -> int:
     if not exe.is_file() or not sjasm.is_file():
         raise SystemExit("PacRipper or SjASMPlus executable not found")
 
-    with tempfile.TemporaryDirectory(prefix="PacRipper-V1.0-cert-") as td:
+    with tempfile.TemporaryDirectory(prefix="PacRipper-1.0-cert-") as td:
         temp = Path(td)
         for variant, spec in EXPECTED.items():
             canonical = Path(sys.argv[spec["input_index"]]).resolve()
@@ -64,7 +64,7 @@ def main() -> int:
             if len(physical) != spec["files"]:
                 raise SystemExit(f"{variant}: physical file count mismatch: {len(physical)}")
             print(f"{variant}: INDEPENDENT ROUND TRIP PASS ({spec['files']}/{spec['files']} files)")
-    print("PacRipper V1.0 certified dual-variant round trip: PASS")
+    print("PacRipper 1.0 certified dual-variant round trip: PASS")
     return 0
 
 if __name__ == "__main__":
