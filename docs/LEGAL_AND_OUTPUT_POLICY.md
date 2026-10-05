@@ -1,6 +1,6 @@
 # Legal and Generated-Output Policy
 
-**PacRipper V1.0 — Created by Jacob Hodgkins**
+**PacRipper 1.0 — Created by Jacob Hodgkins**
 
 PacRipper's `LICENSE` applies to the original PacRipper software and PacRipper-authored project documentation distributed with this repository/package.
 
