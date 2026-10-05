@@ -75,7 +75,7 @@ for executable in bin/PacRipper bin/PacRipperCore; do
   done
 done
 
-if [[ "$(./bin/PacRipper --version)" != "PacRipper 1.0.0" ]]; then
+if [[ "$(./bin/PacRipper --version)" != "PacRipper 1.0" ]]; then
   echo "ERROR: PacRipper macOS launcher smoke test failed." >&2
   exit 1
 fi
