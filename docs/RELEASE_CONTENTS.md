@@ -1,17 +1,21 @@
-# PacRipper V1.0 Release Contents
+# PacRipper 1.0 Release Contents
 
 **Created by Jacob Hodgkins**
 
-This package is intentionally ROM-free. It contains the PacRipper C++ source, deterministic dual-variant release scripts and semantic metadata, Code::Blocks/command-line build files for Linux, Windows, and macOS, documentation, licensing/provenance/security files, and the checked-in PacRipper Linux executables. Native Windows and universal macOS packages are built and validated by GitHub Actions rather than committed as binary copies.
+The PacRipper 1.0 repository is intentionally ROM-free and source-first.
 
-It does **not** contain:
+It contains:
 
-- any of the 10 canonical Pac-Man ROM/PROM payload files;
-- any of the 16 canonical Puckman ROM/PROM payload files;
-- either user's input archive;
-- a pre-generated Pac-Man or Puckman disassembly/output tree;
-- PacRipper's unrelated later runtime/frontend research implementation.
+- C++17 source for `PacRipper` and `PacRipperCore`
+- deterministic Pac-Man/Puckman release scripts and semantic metadata
+- Code::Blocks projects/workspace
+- Linux, Windows, and macOS build scripts
+- Windows and macOS standalone package scripts
+- Docker/OCI build and native amd64/arm64 publication workflow
+- ROM-free runtime, archive-safety, metadata, and release tests
+- release/certification documentation
+- MIT licensing, third-party notices, security policy, citation metadata, and contribution guidance
 
-Exact ROM filenames, expected sizes, CRC32 values, SHA-256 hashes, program hashes, addresses and other validation metadata necessarily appear in source so PacRipper can identify the two certified inputs without copying their payloads.
+Generated native binaries are **not committed** to the source repository. Linux binaries are rebuilt locally/CI; Windows and macOS packages are produced by GitHub Actions; Docker images are published to GHCR.
 
-The release also includes `LICENSE`, `THIRD_PARTY_NOTICES.md`, `SECURITY.md`, `CHANGELOG.md`, and generated-output legal policy documentation.
+The repository contains no canonical Pac-Man/Puckman ROM/PROM payloads and no pre-generated complete disassembly tree.
