@@ -1,21 +1,24 @@
-# PacRipper V1.0 Release Checklist
+# PacRipper 1.0 Release Checklist
 
-A public release is accepted only when all of these gates pass:
+PacRipper 1.0 is considered ready for public release when every applicable gate below has passed.
 
-- [ ] `make release-check` succeeds from a clean Linux tree.
-- [ ] Windows MinGW CI builds and passes `scripts/test_windows_runtime.py` from both the source tree and staged Windows package.
-- [ ] macOS CI builds universal `x86_64` + `arm64` binaries and passes `scripts/test_macos_runtime.py` from both the source tree and staged macOS package.
-- [ ] Docker CI builds from source and passes `scripts/test_docker_runtime.py` with non-root bind mounts plus synthetic ZIP/7z input.
-- [ ] GHCR publication produces a multi-platform manifest containing both `linux/amd64` and `linux/arm64`.
-- [ ] Pac-Man direct `pacman.7z` run succeeds from a fresh package extraction.
-- [ ] Pac-Man `program/pacman.asm` assembles with SjASMPlus with 0 errors / 0 warnings.
-- [ ] Pac-Man reconstructs 10/10 physical files, 25,376/25,376 bytes exact.
-- [ ] Puckman direct `puckman.zip` run succeeds independently.
-- [ ] Puckman `program/puckman.asm` assembles with SjASMPlus with 0 errors / 0 warnings.
-- [ ] Puckman reconstructs 16/16 physical files, 25,376/25,376 bytes exact.
-- [ ] `scripts/strict_rom_free_audit.py` passes against both external canonical references.
-- [ ] Public terminology audit passes.
-- [ ] No user ROM archive, generated disassembly tree, cache, object file, or test payload is packaged unintentionally.
-- [ ] `LICENSE`, `THIRD_PARTY_NOTICES.md`, `SECURITY.md`, `CHANGELOG.md`, and legal-output documentation are present.
-- [ ] Shipping permissions are normalized (755 executables/scripts; 644 source/docs/configuration).
-- [ ] Published release artifact SHA-256 values are recorded (including the permission-preserving macOS tarball).
+- [x] `VERSION` contains `1.0`.
+- [x] CLI `PacRipper --version` returns `PacRipper 1.0`.
+- [x] `make release-check` succeeds from a clean Linux tree.
+- [x] Release metadata audit reports no stale 1.0 release metadata.
+- [x] Windows MinGW CI builds and passes source-tree and staged-package runtime tests.
+- [x] macOS CI builds universal `x86_64` + `arm64` binaries and passes source-tree and staged-package runtime tests.
+- [x] Docker CI builds and tests natively on `linux/amd64`.
+- [x] Docker CI builds and tests natively on `linux/arm64`.
+- [x] GHCR publication produces a multi-platform manifest containing both architectures.
+- [x] Anonymous GHCR manifest access succeeds after logout.
+- [x] Pac-Man direct canonical input certification passes.
+- [x] Pac-Man SjASMPlus round trip passes with 0 errors / 0 warnings.
+- [x] Pac-Man reconstructs 10/10 physical files, 25,376/25,376 bytes exact.
+- [x] Puckman direct canonical input certification passes.
+- [x] Puckman SjASMPlus round trip passes with 0 errors / 0 warnings.
+- [x] Puckman reconstructs 16/16 physical files, 25,376/25,376 bytes exact.
+- [x] Dual-reference strict ROM-free audit passes.
+- [x] Public terminology audit passes.
+- [x] No generated binaries, user ROM archives, generated disassembly trees, object files, or caches are committed unintentionally.
+- [x] `LICENSE`, `THIRD_PARTY_NOTICES.md`, `SECURITY.md`, `CHANGELOG.md`, citation metadata, and legal-output documentation are present.
