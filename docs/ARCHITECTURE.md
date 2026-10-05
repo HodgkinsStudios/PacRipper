@@ -1,4 +1,4 @@
-# PacRipper V1.0 Architecture
+# PacRipper 1.0 Architecture
 
 **Created by Jacob Hodgkins**
 
