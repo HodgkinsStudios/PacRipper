@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-# PacRipper ROM-free OCI/Docker image
+# PacRipper 1.0 ROM-free OCI/Docker image
 # Created by Jacob Hodgkins
 
 FROM debian:bookworm-slim AS build
@@ -28,7 +28,7 @@ FROM debian:bookworm-slim AS runtime
 
 LABEL org.opencontainers.image.title="PacRipper" \
       org.opencontainers.image.description="ROM-free Pac-Man/Puckman disassembly and reconstruction tool" \
-      org.opencontainers.image.version="1.0.0" \
+      org.opencontainers.image.version="1.0" \
       org.opencontainers.image.source="https://github.com/HodgkinsStudios/PacRipper" \
       org.opencontainers.image.licenses="MIT"
 
@@ -58,7 +58,7 @@ COPY scripts/ /opt/pacripper/scripts/
 COPY semantic/ /opt/pacripper/semantic/
 COPY config/ /opt/pacripper/config/
 COPY docs/ /opt/pacripper/docs/
-COPY README.md BUILDING.md CHANGELOG.md LICENSE THIRD_PARTY_NOTICES.md RELEASE_MANIFEST.txt SECURITY.md CITATION.cff /opt/pacripper/
+COPY VERSION README.md BUILDING.md CHANGELOG.md LICENSE THIRD_PARTY_NOTICES.md RELEASE_MANIFEST.txt SECURITY.md CITATION.cff /opt/pacripper/
 
 RUN chmod 0755 /opt/pacripper/bin/PacRipper /opt/pacripper/bin/PacRipperCore \
     && find /opt/pacripper/scripts -type f -name '*.py' -exec chmod 0755 {} + \
