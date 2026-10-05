@@ -36,8 +36,9 @@ release-build:
 release-check: release-build
 	python3 -m compileall -q scripts
 	python3 scripts/release_terminology_audit.py .
+	python3 scripts/release_metadata_audit.py .
 	python3 scripts/test_archive_safety.py
-	@echo "PacRipper V1.0 local release gates: PASS"
+	@echo "PacRipper 1.0 local release gates: PASS"
 
 clean:
 	rm -rf obj/core_make obj/macos bin/PacRipper bin/PacRipperCore bin/PacRipper.exe bin/PacRipperCore.exe

@@ -1,4 +1,4 @@
-# Archive and Output Safety — PacRipper V1.0
+# Archive and Output Safety — PacRipper 1.0
 
 **Created by Jacob Hodgkins**
 

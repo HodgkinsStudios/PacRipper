@@ -1,10 +1,10 @@
 cff-version: 1.2.0
 message: "If you use PacRipper in research, please cite this software."
 title: "PacRipper"
-version: "1.0.0"
-date-released: 2026-09-01
+version: "1.0"
+date-released: 2026-10-04
 authors:
   - family-names: "Hodgkins"
     given-names: "Jacob"
 license: MIT
-type: software
+repository-code: "https://github.com/HodgkinsStudios/PacRipper"

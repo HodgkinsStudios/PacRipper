@@ -1,21 +1,72 @@
-# PacRipper V1.0
+# PacRipper 1.0
 
 **Created by Jacob Hodgkins**
 
-PacRipper is a ROM-free command-line research/reconstruction tool that produces complete human-readable source/disassembly packages from two certified Pac-Man-family arcade board sets: canonical **Pac-Man** and canonical **Puckman**.
+[![Release Check](https://github.com/HodgkinsStudios/PacRipper/actions/workflows/release-check.yml/badge.svg)](https://github.com/HodgkinsStudios/PacRipper/actions/workflows/release-check.yml)
+[![Docker Image](https://github.com/HodgkinsStudios/PacRipper/actions/workflows/docker-image.yml/badge.svg)](https://github.com/HodgkinsStudios/PacRipper/actions/workflows/docker-image.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
+PacRipper is a ROM-free C++17 command-line research and reconstruction tool for two certified Pac-Man-family arcade board sets: canonical **Pac-Man** and canonical **Puckman**. It validates the supplied physical ROM/PROM set, analyzes the board program and resources, and produces a standalone human-readable source/disassembly package with exact-board reconstruction tooling.
 
 PacRipper stands for **Pac**kage **R**om **I**nteractive **P**arser & **P**rogrammable **E**ngineering **R**econstructor.
 
+## Release
+
+Current public release: **1.0**
+
+```text
+PacRipper 1.0
+```
+
+PacRipper 1.0 supports:
+
+| Platform | Release path |
+| --- | --- |
+| Linux | Native C++17/GCC build |
+| Windows | Native MinGW-w64 build and standalone package |
+| macOS | Universal Intel + Apple Silicon build |
+| Other Linux distributions | Docker/Podman image for linux/amd64 and linux/arm64 |
+
+The public Docker image is:
+
+```text
+ghcr.io/hodgkinsstudios/pacripper:1.0
+```
+
+The `latest` tag points to the current 1.0 image.
+
 ## Supported inputs
 
-V1.0 intentionally supports exactly two canonical identities:
+PacRipper 1.0 intentionally accepts exactly two certified board identities:
 
-- **Pac-Man** — self-contained 10-file board set; canonical/reference container `pacman.7z`. An equivalent ZIP or 7z containing the same ten physical files is accepted.
-- **Puckman** — canonical self-contained 16-file board set; certified/reference container `puckman.zip`.
+- **Pac-Man** — canonical self-contained 10-file board set. The reference container is `pacman.7z`; an equivalent ZIP or 7z containing the same ten physical files is accepted.
+- **Puckman** — canonical self-contained 16-file board set. The reference container is `puckman.zip`.
 
-Other revisions, hacks, split parent/clone combinations, and mixed sets are deliberately rejected. PacRipper authenticates every required physical chip by **filename + exact size + CRC32 + SHA-256**; archive filenames alone are not trusted.
+Every required physical file is authenticated by **filename + exact size + CRC32 + SHA-256**. Archive filenames alone are not trusted. Other revisions, hacks, split parent/clone combinations, altered files, and mixed sets are rejected.
 
-## Usage
+PacRipper does **not** include either ROM set.
+
+## Native usage
+
+Build on Linux:
+
+```bash
+./build_ubuntu.sh
+```
+
+Build on macOS:
+
+```bash
+./build_macos.sh
+```
+
+Build on Windows with MinGW-w64:
+
+```bat
+build_windows_mingw.bat
+```
+
+Then run:
 
 ```text
 PacRipper [--force] <input-rom.7z|.zip> <output-folder>
@@ -35,21 +86,51 @@ bin\PacRipper.exe "C:\ROMs\pacman.7z" "C:\PacRipper Output\PacMan_Disassembly"
 bin\PacRipper.exe "C:\ROMs\puckman.zip" "C:\PacRipper Output\Puckman_Disassembly"
 ```
 
-PacRipper refuses to replace an existing output destination by default. To deliberately replace a safe existing destination:
-
-```bash
-./bin/PacRipper --force ~/roms/pacman.7z ~/PacMan_Disassembly
-```
-
-`--force` does **not** disable destructive-path protections. Filesystem roots, the user's home directory itself, PacRipper's application tree/ancestors, the current working directory/ancestors, symlink destinations, and destinations that would contain/delete the input archive are always refused.
-
-Check the installed version with:
+Check the version with:
 
 ```bash
 ./bin/PacRipper --version
 ```
 
-## Independent source outputs
+which returns:
+
+```text
+PacRipper 1.0
+```
+
+## Docker / Podman
+
+Docker provides the easiest distribution-independent Linux path:
+
+```bash
+docker pull ghcr.io/hodgkinsstudios/pacripper:1.0
+
+mkdir -p PacMan_Disassembly
+
+docker run --rm \
+  --user "$(id -u):$(id -g)" \
+  -v "$PWD:/work" \
+  ghcr.io/hodgkinsstudios/pacripper:1.0 \
+  /work/pacman.7z /work/PacMan_Disassembly
+```
+
+The image is published and runtime-tested natively on both **linux/amd64** and **linux/arm64**. It contains PacRipper, Python 3, libarchive, 7-Zip, and the required C++ runtime libraries; it contains no ROM/PROM payloads.
+
+Podman users can replace `docker` with `podman`. On SELinux-enforcing hosts such as Fedora/RHEL, use `-v "$PWD:/work:Z"`.
+
+## Output safety
+
+PacRipper refuses to replace an existing output destination unless `--force` is explicitly supplied:
+
+```bash
+./bin/PacRipper --force ~/roms/pacman.7z ~/PacMan_Disassembly
+```
+
+`--force` never disables destructive-path protections. PacRipper refuses filesystem roots, the user's home directory itself, PacRipper's application tree/ancestors, the current working directory/ancestors, symlink destinations, and destinations that would contain or delete the input archive.
+
+Input archives are treated as untrusted. ZIP/7z handling enforces member-count, member-size, total-expanded-size, duplicate-path, traversal, file-type, and compression-ratio protections. See `docs/ARCHIVE_AND_OUTPUT_SAFETY.md`.
+
+## Independent outputs
 
 Pac-Man produces:
 
@@ -57,7 +138,7 @@ Pac-Man produces:
 program/pacman.asm
 ```
 
-and independently reconstructs the original **10/10 physical files, 25,376/25,376 bytes exact**.
+and independently reconstructs **10/10 physical files, 25,376/25,376 bytes exact**.
 
 Puckman produces:
 
@@ -65,122 +146,76 @@ Puckman produces:
 program/puckman.asm
 ```
 
-and independently reconstructs the original **16/16 physical files, 25,376/25,376 bytes exact**. The Puckman output does not require `pacman.asm`, a Pac-Man output tree, or the Pac-Man ROM set.
+and independently reconstructs **16/16 physical files, 25,376/25,376 bytes exact**.
 
-Both generated trees include structured graphics/PROM sources, manifests, semantic documentation, verification tools, rebuild helpers, and a generated `LEGAL_NOTICE.md` explaining the copyright/license boundary for ROM-derived output.
+The Puckman output does not depend on `pacman.asm`, a Pac-Man output tree, or the Pac-Man ROM set. Both generated trees include structured graphics/PROM sources, semantic documentation, manifests, verification tools, rebuild helpers, and a generated legal notice for ROM-derived output.
 
-## Certified external SjASMPlus round trips
+## Certified round trips
 
-Pac-Man:
+Pac-Man certification:
 
-- `program/pacman.asm`: SjASMPlus 1.24.0, **0 errors / 0 warnings**;
-- 16-KiB program SHA-256: `e9d4817d70bf1931c25e39a3d626e05dd0d5902d9400097316248a52ff627b77`;
-- full physical board reconstruction: **10/10 files exact**.
+- SjASMPlus 1.24.0: **0 errors / 0 warnings**
+- 16 KiB program SHA-256: `e9d4817d70bf1931c25e39a3d626e05dd0d5902d9400097316248a52ff627b77`
+- physical board reconstruction: **10/10 files exact**
 
-Puckman:
+Puckman certification:
 
-- `program/puckman.asm`: SjASMPlus 1.24.0, **0 errors / 0 warnings**;
-- 16-KiB program SHA-256: `de87b3024a309377f5cf438455ed7f37a7aa8b5db5da5189f9b8240f90057cef`;
-- full physical board reconstruction: **16/16 files exact**.
+- SjASMPlus 1.24.0: **0 errors / 0 warnings**
+- 16 KiB program SHA-256: `de87b3024a309377f5cf438455ed7f37a7aa8b5db5da5189f9b8240f90057cef`
+- physical board reconstruction: **16/16 files exact**
 
-Both outputs retain the completed semantic coverage baseline: **381/381 semantic families, 5,414/5,414 instructions, and 257/257 non-code semantic spans**.
+Shared semantic coverage:
 
-## Archive safety
+- **381/381** semantic families
+- **5,414/5,414** Z80 instructions
+- **257/257** non-code semantic spans
 
-User archives are treated as untrusted input. V1.0 rejects unsafe paths, case-insensitive duplicate paths, non-regular 7z members, excessive member counts, oversized members, excessive total decompressed size, and unsafe ZIP compression ratios. Current conservative limits are documented in `docs/ARCHIVE_AND_OUTPUT_SAFETY.md` and tested by `scripts/test_archive_safety.py`.
+Exact ROM round-trip certification uses lawfully supplied external reference sets and is intentionally not performed in public CI.
 
-## Requirements
+## Release verification
 
-Runtime:
-
-- Python 3;
-- the PacRipper package kept intact (`bin`, `scripts`, `semantic`, and supporting metadata);
-- one supported user-supplied ROM set.
-
-ZIP input uses Python's standard library. On Windows, 7z input prefers an installed 7-Zip executable and automatically checks PATH plus the normal `Program Files\7-Zip` locations; libarchive remains a fallback. Linux/macOS retain libarchive-first behavior. PacRipper does not bundle Python, 7-Zip, or libarchive.
-
-The Windows launcher supports the standard Python `py -3` launcher, `python`, `python3`, or an explicit `PACRIPPER_PYTHON` path. Windows input/output paths are read from the Unicode command line, so non-ASCII paths are supported.
-
-Ubuntu/Linux build:
-
-```bash
-./build_ubuntu.sh
-```
-
-Native macOS universal build (Intel + Apple Silicon):
-
-```bash
-./build_macos.sh
-./package_macos.sh
-```
-
-The macOS package contains universal `x86_64` + `arm64` Mach-O executables and is staged as `dist/PacRipper-macOS`, with a permission-preserving `dist/PacRipper-macOS-universal.tar.gz` archive for distribution.
-
-Docker/OCI image for any Linux host with Docker or Podman:
-
-```bash
-docker pull ghcr.io/hodgkinsstudios/pacripper:latest
-mkdir -p PacMan_Disassembly
-docker run --rm \
-  --user "$(id -u):$(id -g)" \
-  -v "$PWD:/work" \
-  ghcr.io/hodgkinsstudios/pacripper:latest \
-  /work/pacman.7z /work/PacMan_Disassembly
-```
-
-The same image works from Fedora, Arch, openSUSE, Debian, Ubuntu, and other Linux distributions because PacRipper and its runtime dependencies execute inside the container. Podman can be used by replacing `docker` with `podman`. On SELinux-enforcing hosts such as Fedora/RHEL, add `:Z` to the bind mount (`-v "$PWD:/work:Z"`). The image never includes ROMs; the user-supplied archive is mounted at runtime.
-
-Build the image locally with:
-
-```bash
-docker build -t pacripper:local .
-```
-
-Running the image with no arguments prints the PacRipper version. The container is also published for both `linux/amd64` and `linux/arm64` at `ghcr.io/hodgkinsstudios/pacripper`.
-
-Strict public-release build gate:
+Run the ROM-free local release gate:
 
 ```bash
 make release-check
 ```
 
-Native macOS support is included and continuously built on GitHub Actions. `build_macos.sh` uses Apple Clang/libc++ to produce universal Intel (`x86_64`) + Apple Silicon (`arm64`) executables with a macOS 11 deployment target by default. The macOS launcher resolves the actual Mach-O executable location through dyld, so the package works when launched from another working directory or through PATH. `package_macos.sh` stages the complete runtime and creates a permission-preserving tarball. The macOS CI gate runs synthetic ZIP/7z tests, non-ASCII path coverage, explicit Python selection, universal-binary checks, and repeats the runtime suite from the staged package.
+Public GitHub Actions additionally validate:
 
-Native Windows/MinGW support is also continuously built on GitHub Actions. Build with `build_windows_mingw.bat` or choose the `Windows Release` targets in the Code::Blocks workspace. Run `package_windows.bat` after building to stage a self-contained `dist\PacRipper-Windows` package containing the executables plus the runtime scripts, semantic data, configuration, documentation, and notices. The Windows CI gate builds both executables, runs synthetic ZIP/7z archive tests, verifies launcher behavior from an unrelated working directory, exercises non-ASCII Windows paths, and reruns the runtime suite from the staged standalone package before publishing it as an artifact. Exact Pac-Man/Puckman round-trip certification still requires lawfully supplied external ROM references and therefore is not performed in public CI. See `BUILDING.md`.
+- Linux native release build
+- Windows MinGW build and standalone package
+- macOS universal Intel/Apple Silicon build and standalone package
+- Docker source build and runtime tests
+- native Docker AMD64 runtime
+- native Docker ARM64 runtime
+- public multi-architecture GHCR manifest
 
-## ROM-free distribution
-
-PacRipper itself contains no Pac-Man/Puckman ROM or PROM payloads and no pre-generated disassembly tree. The input archive is processed in a temporary working directory and is not copied into the PacRipper release or generated source tree.
-
-Repeat the strict dual-reference audit with user-owned reference sets:
+For release certification with external references:
 
 ```bash
+python3 scripts/test_certified_variants.py /path/to/pacman.7z /path/to/puckman.zip /path/to/sjasmplus
 python3 scripts/strict_rom_free_audit.py . /path/to/pacman.7z /path/to/puckman.zip
 ```
+
+## Documentation
+
+- [Building and packaging](BUILDING.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Archive and output safety](docs/ARCHIVE_AND_OUTPUT_SAFETY.md)
+- [Release certification](docs/PACRIPPER_RELEASE_CERTIFICATION.md)
+- [Release status](docs/RELEASE_STATUS.md)
+- [ROM-free release audit](docs/ROM_FREE_RELEASE_AUDIT.md)
+- [Legal and generated-output policy](docs/LEGAL_AND_OUTPUT_POLICY.md)
+- [Contributing](CONTRIBUTING.md)
+- [Security](SECURITY.md)
+- [Changelog](CHANGELOG.md)
 
 ## License and legal boundary
 
 PacRipper's original software and project documentation are released under the **MIT License**. See `LICENSE` and `THIRD_PARTY_NOTICES.md`.
 
-The MIT License does not grant rights to user-supplied ROM/PROM data or ROM-derived generated output. See `docs/LEGAL_AND_OUTPUT_POLICY.md`. Users are responsible for ensuring their possession and use of ROM data is lawful in their jurisdiction.
+The MIT License does not grant rights to user-supplied ROM/PROM data or ROM-derived generated output. Users are responsible for ensuring their possession and use of ROM data is lawful in their jurisdiction.
 
 PacRipper is an independent research/reconstruction utility and is not affiliated with, sponsored by, authorized by, or endorsed by Bandai Namco Entertainment or other rights holders. Pac-Man/Puckman names and related trademarks belong to their respective owners.
 
-## Release verification
-
-See:
-
-- `docs/PACRIPPER_RELEASE_CERTIFICATION.md`
-- `docs/ROM_FREE_RELEASE_AUDIT.md`
-- `docs/ARCHIVE_AND_OUTPUT_SAFETY.md`
-- `docs/RELEASE_CHECKLIST.md`
-- `CHANGELOG.md`
-- `CITATION.cff`
-
-## GitHub repository checks
-
-The repository includes ROM-free GitHub Actions workflows for native releases and containers. `.github/workflows/release-check.yml` validates Linux, Windows, and macOS. `.github/workflows/docker-image.yml` builds the Docker image, runs synthetic ZIP/7z and Unicode bind-mount tests as a non-root host user, and on `main` publishes a multi-architecture `linux/amd64` + `linux/arm64` image to GitHub Container Registry. None of these jobs uses or downloads copyrighted ROM data.
-
-The exact Pac-Man and Puckman reconstruction certifications cannot run in public CI because PacRipper intentionally does not distribute the required ROM/PROM inputs. Maintainers perform those release-only checks locally with lawfully supplied external references using `scripts/test_certified_variants.py`, followed by `scripts/strict_rom_free_audit.py` against both supported reference sets.
-
-Please do not upload ROM/PROM files, reconstructed ROMs, ROM byte dumps, or generated complete disassembly trees in issues or pull requests.
+**Do not upload ROM/PROM files, reconstructed ROMs, ROM byte dumps, or generated complete disassembly trees to public issues or pull requests.**

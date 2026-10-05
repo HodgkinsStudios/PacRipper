@@ -1,6 +1,6 @@
 # Third-Party and Provenance Notices
 
-**PacRipper V1.0 — Created by Jacob Hodgkins**
+**PacRipper 1.0 — Created by Jacob Hodgkins**
 
 ## PacRipper source
 

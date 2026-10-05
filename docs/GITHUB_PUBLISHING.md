@@ -1,46 +1,60 @@
-# Publishing PacRipper V1.0 on GitHub
+# Publishing PacRipper 1.0 on GitHub
 
-PacRipper V1.0 is prepared as a ROM-free source repository. Do not commit or upload Pac-Man/Puckman ROM/PROM files, reconstructed ROMs, generated complete disassembly trees, or ROM byte dumps.
+**Created by Jacob Hodgkins**
 
-## Suggested repository metadata
+PacRipper 1.0 is a ROM-free public source repository. Do not commit or upload Pac-Man/Puckman ROM/PROM files, reconstructed ROMs, generated complete disassembly trees, or ROM byte dumps.
 
-- Repository name: `PacRipper`
-- Description: `ROM-free Pac-Man/Puck Man research and reconstruction tool producing human-readable, byte-exact rebuildable source.`
-- Initial release tag: `v1.0.0`
-- Release title: `PacRipper V1.0`
+## Release identity
 
-## First push
+- Version: `1.0`
+- Git tag: `v1.0`
+- Release title: `PacRipper 1.0`
+- Docker image: `ghcr.io/hodgkinsstudios/pacripper:1.0`
 
-From the extracted `PacRipper_V1.0` directory:
+The top-level `VERSION` file, CLI `--version` output, citation metadata, Docker image label, release documentation, and versioned container tag must all remain synchronized at `1.0`.
 
-```bash
-git init
-git add .
-git commit -m "PacRipper V1.0 public release"
-git branch -M main
-git remote add origin <your-github-repository-url>
-git push -u origin main
-```
+## Before publishing
 
-Then create and push the release tag:
-
-```bash
-git tag -a v1.0.0 -m "PacRipper V1.0"
-git push origin v1.0.0
-```
-
-Create a GitHub Release for `v1.0.0`. The Git repository itself already contains the certified Linux binaries. You may also attach the public-release ZIP as a convenience source/release package.
-
-## CI scope
-
-`.github/workflows/release-check.yml` intentionally performs only ROM-free checks. It does not download, contain, or reconstruct copyrighted ROM inputs. Exact Pac-Man/Puckman round-trip certification remains an offline maintainer release gate using lawfully supplied external references.
-
-## Before every release
-
-Run:
+Run the ROM-free local release gates:
 
 ```bash
 make release-check
 ```
 
-For changes affecting supported profiles or reconstruction, also run the certified variant round trips and strict dual-reference ROM-free audit documented in `RELEASE_MANIFEST.txt` and `CONTRIBUTING.md`.
+For changes affecting supported profiles, reconstruction, or generated output, also run:
+
+```bash
+python3 scripts/test_certified_variants.py /path/to/pacman.7z /path/to/puckman.zip /path/to/sjasmplus
+python3 scripts/strict_rom_free_audit.py . /path/to/pacman.7z /path/to/puckman.zip
+```
+
+Public CI must be green for:
+
+- Linux native release checks
+- Windows MinGW build/runtime/package checks
+- macOS universal build/runtime/package checks
+- Docker source/runtime checks
+- native linux/amd64 container runtime
+- native linux/arm64 container runtime
+- GHCR multi-architecture manifest publication
+
+## Tagging the release
+
+From a clean, fully verified `main` branch:
+
+```bash
+git checkout main
+git pull --ff-only
+git tag -a v1.0 -m "PacRipper 1.0"
+git push origin v1.0
+```
+
+Create a GitHub Release for `v1.0` titled **PacRipper 1.0**.
+
+Native Windows and macOS packages are produced by GitHub Actions. Linux binaries are built from source rather than committed to the repository. The public Docker/OCI image is published to GHCR for both linux/amd64 and linux/arm64.
+
+## ROM-free policy
+
+Public GitHub Actions do not download or contain copyrighted ROM/PROM reference sets. Exact Pac-Man/Puckman round-trip certification remains an offline maintainer release gate using lawfully supplied external references.
+
+Do not attach copyrighted ROM/PROM data or generated complete disassembly trees to public releases, issues, or pull requests.

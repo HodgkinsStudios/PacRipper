@@ -99,6 +99,7 @@ jobs:
         run: |
           python -m compileall -q scripts
           python scripts\release_terminology_audit.py .
+          python scripts\release_metadata_audit.py .
           python scripts\test_archive_safety.py
           python scripts\test_windows_runtime.py
           python dist\PacRipper-Windows\scripts\test_windows_runtime.py
@@ -170,6 +171,7 @@ jobs:
           set -euo pipefail
           python3 -m compileall -q scripts
           python3 scripts/release_terminology_audit.py .
+          python3 scripts/release_metadata_audit.py .
           python3 scripts/test_archive_safety.py
           python3 scripts/test_macos_runtime.py
 

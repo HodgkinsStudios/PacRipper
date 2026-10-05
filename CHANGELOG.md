@@ -1,49 +1,51 @@
 # Changelog
 
-## Unreleased — Docker/OCI distribution
+## 1.0 — 2026-10-04
 
-- Added a multi-stage ROM-free Docker image that compiles PacRipper from source.
-- Added a self-contained Debian runtime with Python 3, libarchive, and 7-Zip support.
-- Added host bind-mount usage that works across Docker/Podman-capable Linux distributions.
-- Added non-root host-user, Unicode-path, synthetic ZIP, and synthetic 7z container runtime tests.
-- Added a strict `.dockerignore` that excludes ROM/archive/generated-output payloads and checked-in native binaries from the build context.
-- Added GitHub Actions validation plus multi-architecture `linux/amd64` and `linux/arm64` publication to GHCR.
-- Switched multi-architecture publication from QEMU compilation to native x86-64 and ARM64 GitHub runners, with native runtime tests for both architectures before the final manifest is created.
+First public cross-platform release.
 
-## Unreleased — macOS port
+### Core release
 
-- Added a native Apple Clang/libc++ build path for macOS.
-- Added universal `x86_64` + `arm64` Mach-O binaries with a macOS 11 deployment target.
-- Added dyld-based executable discovery so packaged launches do not depend on `argv[0]` or the current working directory.
-- Added dedicated Code::Blocks `macOS Universal Release` targets.
-- Added ROM-free macOS runtime tests covering Unicode paths, explicit Python selection, synthetic ZIP/7z input, and universal slices.
-- Added `package_macos.sh` and a permission-preserving universal macOS tarball.
-- Added a GitHub Actions macOS gate that validates the source tree and staged package before publishing `PacRipper-macOS-Universal`.
+- Certified canonical Pac-Man 10-file and Puckman 16-file input profiles.
+- Exact physical-file identity validation using filename, size, CRC32, and SHA-256.
+- Independent Pac-Man and Puckman source/disassembly outputs.
+- Exact full-board reconstruction: Pac-Man 10/10 files and Puckman 16/16 files.
+- Completed semantic coverage baseline: 381/381 semantic families, 5,414/5,414 instructions, and 257/257 non-code semantic spans.
+- Resource-bounded ZIP/7z extraction with traversal, duplicate-path, file-type, decompression-size, and compression-ratio protections.
+- Safe output policy: existing destinations require `--force`; dangerous destinations are always rejected.
+- Strict ROM-free distribution and dual-reference audit.
+- MIT license, provenance notices, security policy, generated-output legal policy, contribution guidance, and release gates.
 
-## Unreleased — Windows port
+### Linux
 
-- Completed the native Windows/MinGW launcher path with Unicode command-line handling.
-- Added Windows Python discovery for `py -3`, `python`, `python3`, and `PACRIPPER_PYTHON`.
-- Made executable-relative package discovery reliable when PacRipper is launched from another working directory.
-- Prefer native 7-Zip on Windows for reliable Unicode `.7z` handling, with libarchive fallback.
-- Hardened the MinGW batch build with strict warnings and static GCC/libstdc++ runtime linkage.
-- Added dedicated Code::Blocks `Windows Release` targets.
-- Added GitHub Actions Windows build/runtime gates with synthetic ZIP/7z and Unicode-path tests.
-- Added `package_windows.bat` and CI validation/publication of a self-contained standalone Windows package.
+- Native C++17/GCC build through `build_ubuntu.sh` and the Makefile.
+- Strict `-O2 -DNDEBUG -Wall -Wextra -Wpedantic -Werror` release build.
+- ROM-free Linux release checks in GitHub Actions.
 
-## V1.0 — 2026-09-01
+### Windows
 
-First public release.
+- Native MinGW-w64 launcher with Unicode command-line handling.
+- Python discovery through `py -3`, `python`, `python3`, or `PACRIPPER_PYTHON`.
+- Executable-relative package discovery independent of the current working directory.
+- Native 7-Zip preference for reliable Unicode `.7z` handling, with libarchive fallback.
+- Static GCC/libstdc++ runtime linkage.
+- Dedicated Code::Blocks `Windows Release` targets.
+- Standalone Windows package staging and ROM-free runtime validation in GitHub Actions.
 
-- Certified independent Pac-Man and Puckman source/disassembly outputs.
-- Pac-Man canonical self-contained 10-file `.7z` input support.
-- Puckman canonical self-contained 16-file `.zip` input support.
-- Exact independent full-board reconstruction: Pac-Man 10/10 and Puckman 16/16 files.
-- Strict ROM-free distribution audit.
-- Public terminology cleanup and release-oriented source naming.
-- Size + CRC32 + SHA-256 physical-ROM identity validation.
-- Resource-bounded ZIP/7z extraction with traversal and duplicate-path protection.
-- Safe output policy: existing destinations require `--force`; dangerous destinations are always refused.
-- Generated-output legal notice distinguishing PacRipper's software license from user ROMs and ROM-derived output.
-- MIT license, provenance/third-party notices, security policy, and formal release-build gates.
-- GitHub repository preparation: ROM-free CI workflow, issue/PR templates, `.gitattributes`, cache cleanup, and repository contribution guards.
+### macOS
+
+- Native Apple Clang/libc++ build path.
+- Universal `x86_64` + `arm64` Mach-O executables with a macOS 11 deployment target.
+- dyld-based executable discovery for reliable packaged launches.
+- Dedicated Code::Blocks `macOS Universal Release` targets.
+- Standalone permission-preserving macOS package.
+- Native macOS runtime tests covering Unicode paths, Python selection, ZIP/7z input, and both architecture slices.
+
+### Docker / OCI
+
+- Multi-stage ROM-free image that rebuilds PacRipper from source.
+- Self-contained runtime with Python 3, libarchive, and 7-Zip.
+- Non-root bind-mount workflow for distribution-independent Linux usage.
+- Docker/Podman documentation including SELinux bind-mount guidance.
+- Native `linux/amd64` and `linux/arm64` build/runtime validation.
+- Public GHCR multi-architecture image with provenance/SBOM metadata.

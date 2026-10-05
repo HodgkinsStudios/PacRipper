@@ -1,10 +1,10 @@
-# PacRipper V1.0 Dual-Variant Release Certification
+# PacRipper 1.0 Dual-Variant Release Certification
 
 **Created by Jacob Hodgkins**
 
 ## Scope
 
-PacRipper V1.0 is locked to exactly two certified Pac-Man-family board identities: canonical Pac-Man and canonical Puckman. The public interface remains:
+PacRipper 1.0 is locked to exactly two certified Pac-Man-family board identities: canonical Pac-Man and canonical Puckman. The public interface remains:
 
 ```text
 PacRipper [--force] <input-rom.7z|.zip> <output-folder>

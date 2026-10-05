@@ -74,7 +74,7 @@ def main() -> int:
     require(shutil.which("docker") is not None, "docker CLI was not found")
 
     version = run(["docker", "run", "--rm", IMAGE, "--version"])
-    require(version.stdout.strip() == "PacRipper 1.0.0", "unexpected container version output")
+    require(version.stdout.strip() == "PacRipper 1.0", "unexpected container version output")
 
     package_check = run(
         [

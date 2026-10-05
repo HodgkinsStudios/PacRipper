@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Synthetic archive/output safety regression tests for PacRipper V1.0.
+"""Synthetic archive/output safety regression tests for PacRipper 1.0.
 Created by Jacob Hodgkins. No copyrighted ROM data is used by this test.
 """
 from __future__ import annotations

@@ -26,7 +26,7 @@
 namespace fs = std::filesystem;
 
 namespace {
-constexpr const char* kVersion = "1.0.0";
+constexpr const char* kVersion = "1.0";
 
 void printUsage() {
     std::cerr << "PacRipper " << kVersion << " - complete Pac-Man/Puckman board disassembly/reconstruction tool\n"

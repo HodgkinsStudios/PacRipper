@@ -4,7 +4,7 @@ PacRipper parses user-supplied ZIP and 7z archives, so malformed archive handlin
 
 ## Supported release
 
-Security fixes are maintained for the current public V1.0 release line.
+Security fixes are maintained for the current public 1.0 release line.
 
 ## Reporting a vulnerability
 

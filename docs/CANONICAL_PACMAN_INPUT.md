@@ -1,8 +1,8 @@
-# Canonical Pac-Man Input — PacRipper V1.0
+# Canonical Pac-Man Input — PacRipper 1.0
 
 **Created by Jacob Hodgkins**
 
-PacRipper V1.0 uses the self-contained **10-file Pac-Man board set** as its canonical input authority. The certified reference container is `pacman.7z`; canonical identity is the extracted board content, not 7z compression metadata.
+PacRipper 1.0 uses the self-contained **10-file Pac-Man board set** as its canonical input authority. The certified reference container is `pacman.7z`; canonical identity is the extracted board content, not 7z compression metadata.
 
 PacRipper authenticates each physical chip by filename, exact size, CRC32, and SHA-256.
 
@@ -23,4 +23,4 @@ PacRipper authenticates each physical chip by filename, exact size, CRC32, and S
 
 Total: **10 files / 25,376 bytes**.
 
-PacRipper accepts this set directly as `.7z` and also accepts a self-contained ZIP containing the same ten authenticated members. Split-set parent resolution and other Pac-Man-family revisions beyond the separately certified Puckman profile are intentionally outside V1.0.
+PacRipper accepts this set directly as `.7z` and also accepts a self-contained ZIP containing the same ten authenticated members. Split-set parent resolution and other Pac-Man-family revisions beyond the separately certified Puckman profile are intentionally outside 1.0.

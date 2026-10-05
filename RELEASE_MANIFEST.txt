@@ -1,5 +1,8 @@
-PacRipper V1.0 ROM-free dual-variant public release inventory
+PacRipper 1.0 ROM-free public release inventory
 Created by Jacob Hodgkins
+
+Version:
+  1.0
 
 License:
   MIT License for original PacRipper software/project documentation
@@ -21,14 +24,13 @@ Safe output policy:
 Locked certified variants:
   Pac-Man canonical 10-file set; reference container pacman.7z
   Puckman canonical 16-file set; reference container puckman.zip
-  other revisions/variants intentionally unsupported in V1.0
+  other revisions/variants intentionally unsupported in 1.0
   every physical file authenticated by filename + size + CRC32 + SHA-256
 
 Independent output contract:
   Pac-Man -> program/pacman.asm -> 10/10 board files / 25376/25376 bytes exact
   Puckman -> program/puckman.asm -> 16/16 board files / 25376/25376 bytes exact
   no cross-variant source-tree dependency
-  no duplicate hidden reconstruction assembly file
   generated output includes LEGAL_NOTICE.md
 
 Shared recovered coverage:
@@ -53,24 +55,25 @@ ROM policy:
   no Pac-Man ROM/PROM payloads
   no Puckman ROM/PROM payloads
   no user input archives
-  no pre-generated disassembly output trees
+  no pre-generated complete disassembly output trees
   dual-reference strict ROM-free audit: scripts/strict_rom_free_audit.py
 
 Release gates:
   Linux: make release-check
   Windows: build_windows_mingw.bat + scripts/test_windows_runtime.py + staged-package retest
   macOS: build_macos.sh universal x86_64+arm64 + scripts/test_macos_runtime.py + staged-package retest
-  Docker: Dockerfile strict source build + scripts/test_docker_runtime.py
-  scripts/test_certified_variants.py against both external canonical references
-  scripts/strict_rom_free_audit.py against both external canonical references
+  Docker: native linux/amd64 + linux/arm64 builds + scripts/test_docker_runtime.py
+  exact variants: scripts/test_certified_variants.py against external canonical references
+  ROM-free audit: scripts/strict_rom_free_audit.py against both external canonical references
 
-Standalone packaging:
+Standalone distribution:
   Windows: package_windows.bat -> dist/PacRipper-Windows
   macOS: package_macos.sh -> dist/PacRipper-macOS + dist/PacRipper-macOS-universal.tar.gz
-  Docker/OCI: ghcr.io/hodgkinsstudios/pacripper -> linux/amd64 + linux/arm64
+  Docker/OCI: ghcr.io/hodgkinsstudios/pacripper:1.0 -> linux/amd64 + linux/arm64
 
-GitHub repository packaging:
-  .github/workflows/release-check.yml runs only ROM-free local gates
+GitHub repository safeguards:
+  .github/workflows/release-check.yml runs ROM-free native release gates
+  .github/workflows/docker-image.yml validates and publishes the multi-architecture image
   issue and pull-request templates prohibit copyrighted ROM/disassembly attachments
-  .gitattributes normalizes text files and marks shipped binaries as binary
-  __pycache__ / *.pyc files are excluded from the shipping tree
+  .dockerignore excludes ROM archives, generated assembly/output and local build products
+  .gitignore excludes local build/runtime artifacts

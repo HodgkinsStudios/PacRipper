@@ -155,7 +155,6 @@ jobs:
           docker buildx imagetools create \
             -t "${IMAGE_NAME}:latest" \
             -t "${IMAGE_NAME}:1.0" \
-            -t "${IMAGE_NAME}:1.0.0" \
             -t "${IMAGE_NAME}:sha-${GITHUB_SHA}" \
             "$AMD64" "$ARM64"
 
