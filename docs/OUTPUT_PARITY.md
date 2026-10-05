@@ -1,4 +1,4 @@
-# PacRipper V1.0 Output Compatibility
+# PacRipper 1.0 Output Compatibility
 
 **Created by Jacob Hodgkins**
 
