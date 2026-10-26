@@ -1,0 +1,46 @@
+# PacRipper local build/runtime artifacts
+/bin/
+obj/
+dist/
+__pycache__/
+*.pyc
+*.pyo
+*.o
+*.obj
+*.tmp
+*.log
+.PacRipper-stage-*
+
+# Generated disassembly/reconstruction outputs should live outside the source tree.
+PacMan_Disassembly/
+Puckman_Disassembly/
+
+# Common editor/OS-local files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Generated packages, extracted ROMs and assembly outputs
+*.7z
+*.zip
+*.rar
+*.rom
+*.prom
+*.bin
+*.asm
+*.tar.gz
+
+# Local Python/tool/editor caches and temporary files
+.venv/
+.pytest_cache/
+.mypy_cache/
+.cache/
+*.swp
+*.swo
+*.bak
+*.orig
+*.rej
+*~
+*.cbp.layout
+*.depend

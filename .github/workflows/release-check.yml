@@ -1,0 +1,208 @@
+name: Release Check
+
+on:
+  push:
+    branches: ["main", "master"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux-release-check:
+    name: Linux strict build and version check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          python3 --version
+          g++ --version
+          make --version
+
+      - name: Run strict source checks
+        run: make release-check
+
+      - name: Confirm repository contains no ROM archives or generated outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f \( \
+              -iname '*.7z' -o -iname '*.rar' -o -iname '*.rom' -o -iname '*.prom' \
+              -o -iname '*.bin' -o -iname '*.asm' \
+            \) -print -quit | grep -q .; then
+            echo 'Forbidden ROM/archive/generated-source artifact found:'
+            find . -type f \( \
+              -iname '*.7z' -o -iname '*.rar' -o -iname '*.rom' -o -iname '*.prom' \
+              -o -iname '*.bin' -o -iname '*.asm' \
+            \) -print
+            exit 1
+          fi
+          echo 'Repository artifact guard: PASS'
+
+
+  windows-release-check:
+    name: Windows build and package check
+    runs-on: windows-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up MinGW-w64
+        id: msys2
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: false
+          install: >-
+            mingw-w64-x86_64-gcc
+
+      - name: Resolve MinGW compiler
+        shell: msys2 {0}
+        run: |
+          g++ --version
+          printf 'MINGW_CXX=%s\n' "$(cygpath -w "$(command -v g++)")" >> "$GITHUB_ENV"
+
+      - name: Show Windows runtime tools
+        shell: cmd
+        run: |
+          python --version
+          where 7z
+          echo MINGW_CXX=%MINGW_CXX%
+
+      - name: Build native Windows binaries
+        shell: cmd
+        run: call build_windows_mingw.bat
+
+      - name: Stage standalone Windows package
+        shell: cmd
+        run: call package_windows.bat
+
+      - name: Verify Windows executables and script syntax
+        shell: cmd
+        run: |
+          python -m compileall -q scripts
+          bin\PacRipper.exe --version
+          dist\PacRipper-Windows\bin\PacRipper.exe --version
+
+      - name: Confirm repository contains no ROM archives or generated outputs
+        shell: pwsh
+        run: |
+          $forbidden = Get-ChildItem -Recurse -File | Where-Object {
+            $_.Extension -in @('.7z', '.rar', '.rom', '.prom', '.bin', '.asm')
+          }
+          if ($forbidden) {
+            Write-Error ("Forbidden ROM/archive/generated-source artifact found:`n" + (($forbidden.FullName) -join "`n"))
+            exit 1
+          }
+          Write-Host "Repository artifact guard: PASS"
+
+      - name: Upload standalone Windows package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PacRipper-Windows-MinGW
+          path: dist/PacRipper-Windows
+          if-no-files-found: error
+
+
+  macos-release-check:
+    name: macOS universal build and package check
+    runs-on: macos-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Show macOS toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          sw_vers
+          uname -m
+          python3 --version
+          clang++ --version
+          xcrun --find lipo
+
+      - name: Install 7-Zip test tool
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! command -v 7zz >/dev/null 2>&1 && ! command -v 7z >/dev/null 2>&1; then
+            brew install sevenzip
+          fi
+          (command -v 7zz || command -v 7z || command -v 7zr)
+
+      - name: Build universal macOS binaries
+        shell: bash
+        run: |
+          chmod +x build_macos.sh package_macos.sh
+          ./build_macos.sh
+          file bin/PacRipper
+          file bin/PacRipperCore
+          lipo -archs bin/PacRipper
+          lipo -archs bin/PacRipperCore
+
+      - name: Verify macOS source-tree build
+        shell: bash
+        env:
+          PACRIPPER_EXPECT_UNIVERSAL: "1"
+        run: |
+          set -euo pipefail
+          python3 -m compileall -q scripts
+          ./bin/PacRipper --version
+
+      - name: Stage standalone macOS package
+        shell: bash
+        run: ./package_macos.sh
+
+      - name: Verify macOS staged package
+        shell: bash
+        env:
+          PACRIPPER_EXPECT_UNIVERSAL: "1"
+        run: |
+          set -euo pipefail
+          dist/PacRipper-macOS/bin/PacRipper --version
+          tar -tzf dist/PacRipper-macOS-universal.tar.gz >/dev/null
+
+      - name: Confirm repository contains no ROM archives or generated outputs
+        shell: bash
+        run: |
+          set -euo pipefail
+          if find . -type f \( \
+              -iname '*.7z' -o -iname '*.rar' -o -iname '*.rom' -o -iname '*.prom' \
+              -o -iname '*.bin' -o -iname '*.asm' \
+            \) -print -quit | grep -q .; then
+            echo 'Forbidden ROM/archive/generated-source artifact found:'
+            find . -type f \( \
+              -iname '*.7z' -o -iname '*.rar' -o -iname '*.rom' -o -iname '*.prom' \
+              -o -iname '*.bin' -o -iname '*.asm' \
+            \) -print
+            exit 1
+          fi
+          echo 'Repository artifact guard: PASS'
+
+      - name: Upload standalone macOS universal package
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: PacRipper-macOS-Universal
+          path: dist/PacRipper-macOS-universal.tar.gz
+          if-no-files-found: error

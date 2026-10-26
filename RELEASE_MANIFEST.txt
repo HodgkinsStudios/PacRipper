@@ -1,0 +1,79 @@
+PacRipper 1.0 ROM-free public release inventory
+Created by Jacob Hodgkins
+
+Version:
+  1.0
+
+License:
+  MIT License for original PacRipper software/project documentation
+  ROM/PROM inputs and ROM-derived generated output are not relicensed by MIT
+  see LICENSE, THIRD_PARTY_NOTICES.md, docs/LEGAL_AND_OUTPUT_POLICY.md
+
+Public executables:
+  bin/PacRipper
+  bin/PacRipperCore (private helper invoked by PacRipper)
+
+CLI:
+  PacRipper [--force] <input-rom.7z|.zip> <output-folder>
+  PacRipper --version
+
+Safe output policy:
+  existing output is refused unless --force is explicit
+  dangerous destinations remain forbidden even with --force
+
+Locked certified variants:
+  Pac-Man canonical 10-file set; reference container pacman.7z
+  Puckman canonical 16-file set; reference container puckman.zip
+  other revisions/variants intentionally unsupported in 1.0
+  every physical file authenticated by filename + size + CRC32 + SHA-256
+
+Independent output contract:
+  Pac-Man -> program/pacman.asm -> 10/10 board files / 25376/25376 bytes exact
+  Puckman -> program/puckman.asm -> 16/16 board files / 25376/25376 bytes exact
+  no cross-variant source-tree dependency
+  generated output includes LEGAL_NOTICE.md
+
+Shared recovered coverage:
+  381/381 semantic families
+  5414/5414 Z80 instructions
+  257/257 non-code semantic spans
+
+External assembler certification:
+  SjASMPlus 1.24.0 Pac-Man: 0 errors / 0 warnings
+  Pac-Man program SHA-256: e9d4817d70bf1931c25e39a3d626e05dd0d5902d9400097316248a52ff627b77
+  SjASMPlus 1.24.0 Puckman: 0 errors / 0 warnings
+  Puckman program SHA-256: de87b3024a309377f5cf438455ed7f37a7aa8b5db5da5189f9b8240f90057cef
+
+Archive safety:
+  16 MiB maximum input archive
+  64 maximum regular members
+  64 KiB maximum decompressed member
+  1 MiB maximum total decompressed data
+  ZIP compression-ratio guard plus traversal/duplicate/non-regular-member checks
+
+ROM policy:
+  no Pac-Man ROM/PROM payloads
+  no Puckman ROM/PROM payloads
+  no user input archives
+  no pre-generated complete disassembly output trees
+  dual-reference strict ROM-free audit: scripts/strict_rom_free_audit.py
+
+Release gates:
+  Linux: make release-check
+  Windows: build_windows_mingw.bat + staged-package version smoke check
+  macOS: build_macos.sh universal x86_64+arm64 + staged-package version smoke check
+  Docker: native linux/amd64 + linux/arm64 builds + image version smoke check
+  exact variants: offline independent source assembly and physical-file comparison against lawful external references
+  ROM-free audit: scripts/strict_rom_free_audit.py against both external canonical references
+
+Standalone distribution:
+  Windows: package_windows.bat -> dist/PacRipper-Windows
+  macOS: package_macos.sh -> dist/PacRipper-macOS + dist/PacRipper-macOS-universal.tar.gz
+  Docker/OCI: ghcr.io/hodgkinsstudios/pacripper:1.0 -> linux/amd64 + linux/arm64
+
+GitHub repository safeguards:
+  .github/workflows/release-check.yml runs ROM-free native release gates
+  .github/workflows/docker-image.yml validates and publishes the multi-architecture image
+  issue and pull-request templates prohibit copyrighted ROM/disassembly attachments
+  .dockerignore excludes ROM archives, generated assembly/output and local build products
+  .gitignore excludes local build/runtime artifacts

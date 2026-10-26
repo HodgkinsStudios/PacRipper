@@ -1,0 +1,16 @@
+# PacRipper repository text/binary normalization
+* text=auto eol=lf
+
+# Windows command files should retain CRLF when checked out.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Known binary artifacts.
+*.png binary
+*.gif binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.exe binary
+bin/PacRipper binary
+bin/PacRipperCore binary

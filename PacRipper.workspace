@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+  <Workspace title="PacRipper">
+    <Project filename="PacRipperCore.cbp" />
+    <Project filename="PacRipper.cbp" active="1">
+      <Depends filename="PacRipperCore.cbp" />
+    </Project>
+  </Workspace>
+</CodeBlocks_workspace_file>
